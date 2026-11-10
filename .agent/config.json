@@ -1,0 +1,164 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "name": "universal-fintech-motion-skills",
+  "version": "1.0.0",
+  "description": "55 universal AI agent skills that generate self-contained HTML5 fintech motion and explanation videos using HTML5, TailwindCSS, Vanilla JS and inline SVG.",
+  "license": "GPL-3.0",
+  "masterPrompt": "./master-prompt.md",
+  "entrypoint": {
+    "instructions": "./master-prompt.md",
+    "skillIndex": "../skills/",
+    "demo": "../demos/stripe-flow-explainer.html"
+  },
+  "compatibility": [
+    "claude-code",
+    "cursor",
+    "windsurf",
+    "antigravity",
+    "manus",
+    "qoder",
+    "jarvis",
+    "cue",
+    "grok",
+    "codex",
+    "github-copilot"
+  ],
+  "configFiles": {
+    "claude-code": "../CLAUDE.md",
+    "cursor": "../.cursorrules",
+    "windsurf": "../.windsurfrules",
+    "github-copilot": "../.github/copilot-instructions.md",
+    "universal": "../AGENTS.md"
+  },
+  "runtime": {
+    "outputFormat": "single-html-file",
+    "stack": ["html5", "tailwindcss-cdn", "vanilla-js", "inline-svg"],
+    "requiresBuildStep": false,
+    "requiresNetwork": ["https://cdn.tailwindcss.com", "https://fonts.googleapis.com"],
+    "offlineFallback": "Inline CSS custom properties mirror every Tailwind utility used for layout, so the file renders without the CDN."
+  },
+  "engine": {
+    "class": "TimelineEngine",
+    "stateModel": "pure-function-of-normalized-progress",
+    "drivingLoop": "requestAnimationFrame",
+    "capabilities": [
+      "play-pause-replay",
+      "click-and-drag-scrubber",
+      "click-to-seek",
+      "scene-boundary-markers",
+      "step-indicator",
+      "live-captions",
+      "speed-1x-1.5x-2x",
+      "theme-toggle",
+      "keyboard-shortcuts"
+    ],
+    "defaults": {
+      "duration": 16000,
+      "speed": 1,
+      "sceneCount": 4
+    }
+  },
+  "designSystem": {
+    "light": {
+      "canvas": "#F8FAFC",
+      "surface": "#FFFFFF",
+      "text": "#0F172A",
+      "muted": "#64748B",
+      "border": "#E2E8F0",
+      "success": "#10B981",
+      "primary": "#4F46E5",
+      "telemetry": "#06B6D4",
+      "risk": "#F43F5E"
+    },
+    "dark": {
+      "canvas": "#090D16",
+      "surface": "rgba(255,255,255,0.03)",
+      "text": "#F8FAFC",
+      "muted": "#94A3B8",
+      "border": "rgba(255,255,255,0.08)",
+      "success": "#34D399",
+      "primary": "#6366F1",
+      "telemetry": "#22D3EE",
+      "risk": "#FB7185"
+    },
+    "type": {
+      "ui": ["Inter", "Plus Jakarta Sans"],
+      "data": ["JetBrains Mono"],
+      "numericFeature": "tabular-nums"
+    },
+    "motion": {
+      "entry": "cubic-bezier(0.16, 1, 0.3, 1)",
+      "symmetric": "cubic-bezier(0.65, 0, 0.35, 1)",
+      "spring": { "stiffness": 220, "damping": 24 },
+      "linearAllowedFor": ["realtime-countdown", "ambient-rotation"]
+    }
+  },
+  "skills": [
+    { "id": "01", "slug": "p2p-transfer", "name": "P2P Instant Transfer", "category": "A", "durationMs": 16000, "file": "../skills/skill-01-p2p-transfer.md" },
+    { "id": "02", "slug": "card-swipe-auth", "name": "Card Swipe Authorization", "category": "A", "durationMs": 18000, "file": "../skills/skill-02-card-swipe-auth.md" },
+    { "id": "03", "slug": "split-bill", "name": "Split Bill", "category": "A", "durationMs": 16000, "file": "../skills/skill-03-split-bill.md" },
+    { "id": "04", "slug": "qr-scan-pay", "name": "QR Scan and Pay", "category": "A", "durationMs": 15000, "file": "../skills/skill-04-qr-scan-pay.md" },
+    { "id": "05", "slug": "cross-border-fx", "name": "Cross-Border FX Transfer", "category": "A", "durationMs": 18000, "file": "../skills/skill-05-cross-border-fx.md" },
+    { "id": "06", "slug": "escrow-release", "name": "Escrow Release", "category": "A", "durationMs": 17000, "file": "../skills/skill-06-escrow-release.md" },
+    { "id": "07", "slug": "subscription-recurring", "name": "Subscription Recurring Billing", "category": "A", "durationMs": 18000, "file": "../skills/skill-07-subscription-recurring.md" },
+    { "id": "08", "slug": "refund-reversal", "name": "Refund Reversal", "category": "A", "durationMs": 15000, "file": "../skills/skill-08-refund-reversal.md" },
+    { "id": "09", "slug": "nfc-contactless", "name": "NFC Contactless Tap", "category": "A", "durationMs": 14000, "file": "../skills/skill-09-nfc-contactless.md" },
+    { "id": "10", "slug": "multi-currency-wallet", "name": "Multi-Currency Wallet", "category": "A", "durationMs": 16000, "file": "../skills/skill-10-multi-currency-wallet.md" },
+    { "id": "11", "slug": "ach-wire-routing", "name": "ACH, Wire and Real-Time Routing", "category": "B", "durationMs": 19000, "file": "../skills/skill-11-ach-wire-routing.md" },
+    { "id": "12", "slug": "immutable-ledger", "name": "Immutable Ledger", "category": "B", "durationMs": 18000, "file": "../skills/skill-12-immutable-ledger.md" },
+    { "id": "13", "slug": "api-webhook-sync", "name": "API and Webhook Sync", "category": "B", "durationMs": 17000, "file": "../skills/skill-13-api-webhook-sync.md" },
+    { "id": "14", "slug": "liquidity-pool", "name": "Liquidity Pool Balancing", "category": "B", "durationMs": 17000, "file": "../skills/skill-14-liquidity-pool.md" },
+    { "id": "15", "slug": "smart-contract-exec", "name": "Smart Contract Execution", "category": "B", "durationMs": 17000, "file": "../skills/skill-15-smart-contract-exec.md" },
+    { "id": "16", "slug": "automated-reconciliation", "name": "Automated Reconciliation", "category": "B", "durationMs": 18000, "file": "../skills/skill-16-automated-reconciliation.md" },
+    { "id": "17", "slug": "virtual-card-issuance", "name": "Virtual Card Issuance", "category": "B", "durationMs": 16000, "file": "../skills/skill-17-virtual-card-issuance.md" },
+    { "id": "18", "slug": "open-banking-oauth", "name": "Open Banking OAuth", "category": "B", "durationMs": 18000, "file": "../skills/skill-18-open-banking-oauth.md" },
+    { "id": "19", "slug": "micro-investing-roundup", "name": "Micro-Investing Round-Up", "category": "B", "durationMs": 15000, "file": "../skills/skill-19-micro-investing-roundup.md" },
+    { "id": "20", "slug": "treasury-yield-flow", "name": "Treasury Yield Sweep", "category": "B", "durationMs": 18000, "file": "../skills/skill-20-treasury-yield-flow.md" },
+    { "id": "21", "slug": "compound-interest-curve", "name": "Compound Interest Curve", "category": "C", "durationMs": 18000, "file": "../skills/skill-21-compound-interest-curve.md" },
+    { "id": "22", "slug": "portfolio-rebalance", "name": "Portfolio Rebalance", "category": "C", "durationMs": 17000, "file": "../skills/skill-22-portfolio-rebalance.md" },
+    { "id": "23", "slug": "candlestick-formation", "name": "Candlestick Formation", "category": "C", "durationMs": 18000, "file": "../skills/skill-23-candlestick-formation.md" },
+    { "id": "24", "slug": "robo-advisor-allocation", "name": "Robo-Advisor Allocation", "category": "C", "durationMs": 16000, "file": "../skills/skill-24-robo-advisor-allocation.md" },
+    { "id": "25", "slug": "dividend-drip", "name": "Dividend Reinvestment", "category": "C", "durationMs": 16000, "file": "../skills/skill-25-dividend-drip.md" },
+    { "id": "26", "slug": "tax-loss-harvesting", "name": "Tax-Loss Harvesting", "category": "C", "durationMs": 18000, "file": "../skills/skill-26-tax-loss-harvesting.md" },
+    { "id": "27", "slug": "fractional-shares", "name": "Fractional Shares", "category": "C", "durationMs": 15000, "file": "../skills/skill-27-fractional-shares.md" },
+    { "id": "28", "slug": "order-book-depth", "name": "Order Book Depth", "category": "C", "durationMs": 17000, "file": "../skills/skill-28-order-book-depth.md" },
+    { "id": "29", "slug": "net-worth-aggregator", "name": "Net Worth Aggregator", "category": "C", "durationMs": 16000, "file": "../skills/skill-29-net-worth-aggregator.md" },
+    { "id": "30", "slug": "dca-simulator", "name": "Dollar-Cost Averaging", "category": "C", "durationMs": 18000, "file": "../skills/skill-30-dca-simulator.md" },
+    { "id": "31", "slug": "biometric-kyc", "name": "Biometric KYC", "category": "D", "durationMs": 18000, "file": "../skills/skill-31-biometric-kyc.md" },
+    { "id": "32", "slug": "zero-knowledge-proof", "name": "Zero-Knowledge Proof", "category": "D", "durationMs": 19000, "file": "../skills/skill-32-zero-knowledge-proof.md" },
+    { "id": "33", "slug": "end-to-end-encryption", "name": "End-to-End Encryption", "category": "D", "durationMs": 17000, "file": "../skills/skill-33-end-to-end-encryption.md" },
+    { "id": "34", "slug": "aml-fraud-radar", "name": "AML Fraud Radar", "category": "D", "durationMs": 19000, "file": "../skills/skill-34-aml-fraud-radar.md" },
+    { "id": "35", "slug": "2fa-totp-countdown", "name": "2FA TOTP Countdown", "category": "D", "durationMs": 15000, "file": "../skills/skill-35-2fa-totp-countdown.md" },
+    { "id": "36", "slug": "tokenization-vault", "name": "Tokenization Vault", "category": "D", "durationMs": 16000, "file": "../skills/skill-36-tokenization-vault.md" },
+    { "id": "37", "slug": "role-based-access", "name": "Role-Based Access Control", "category": "D", "durationMs": 17000, "file": "../skills/skill-37-role-based-access.md" },
+    { "id": "38", "slug": "pci-dss-shield", "name": "PCI DSS Shield", "category": "D", "durationMs": 17000, "file": "../skills/skill-38-pci-dss-shield.md" },
+    { "id": "39", "slug": "device-fingerprinting", "name": "Device Fingerprinting", "category": "D", "durationMs": 16000, "file": "../skills/skill-39-device-fingerprinting.md" },
+    { "id": "40", "slug": "instant-card-freeze", "name": "Instant Card Freeze", "category": "D", "durationMs": 15000, "file": "../skills/skill-40-instant-card-freeze.md" },
+    { "id": "41", "slug": "credit-score-gauge", "name": "Credit Score Gauge", "category": "E", "durationMs": 17000, "file": "../skills/skill-41-credit-score-gauge.md" },
+    { "id": "42", "slug": "bnpl-installments", "name": "BNPL Installments", "category": "E", "durationMs": 16000, "file": "../skills/skill-42-bnpl-installments.md" },
+    { "id": "43", "slug": "invoice-factoring", "name": "Invoice Factoring", "category": "E", "durationMs": 17000, "file": "../skills/skill-43-invoice-factoring.md" },
+    { "id": "44", "slug": "payroll-distribution", "name": "Payroll Distribution", "category": "E", "durationMs": 16000, "file": "../skills/skill-44-payroll-distribution.md" },
+    { "id": "45", "slug": "expense-receipt-ocr", "name": "Expense Receipt OCR", "category": "E", "durationMs": 17000, "file": "../skills/skill-45-expense-receipt-ocr.md" },
+    { "id": "46", "slug": "revenue-based-financing", "name": "Revenue-Based Financing", "category": "E", "durationMs": 17000, "file": "../skills/skill-46-revenue-based-financing.md" },
+    { "id": "47", "slug": "cap-table-dilution", "name": "Cap Table Dilution", "category": "E", "durationMs": 18000, "file": "../skills/skill-47-cap-table-dilution.md" },
+    { "id": "48", "slug": "saas-mrr-waterfall", "name": "SaaS MRR Waterfall", "category": "E", "durationMs": 17000, "file": "../skills/skill-48-saas-mrr-waterfall.md" },
+    { "id": "49", "slug": "usage-based-billing", "name": "Usage-Based Billing", "category": "E", "durationMs": 16000, "file": "../skills/skill-49-usage-based-billing.md" },
+    { "id": "50", "slug": "customs-trade-finance", "name": "Customs and Trade Finance", "category": "E", "durationMs": 19000, "file": "../skills/skill-50-customs-trade-finance.md" },
+    { "id": "51", "slug": "debt-snowball-vs-avalanche", "name": "Debt Snowball vs Avalanche", "category": "E", "durationMs": 19000, "file": "../skills/skill-51-debt-snowball-vs-avalanche.md" },
+    { "id": "52", "slug": "chargeback-dispute-flow", "name": "Chargeback Dispute Flow", "category": "E", "durationMs": 18000, "file": "../skills/skill-52-chargeback-dispute-flow.md" },
+    { "id": "53", "slug": "embedded-insurance", "name": "Embedded Insurance", "category": "E", "durationMs": 15000, "file": "../skills/skill-53-embedded-insurance.md" },
+    { "id": "54", "slug": "carbon-offset-checkout", "name": "Carbon Offset Checkout", "category": "E", "durationMs": 16000, "file": "../skills/skill-54-carbon-offset-checkout.md" },
+    { "id": "55", "slug": "ai-financial-copilot", "name": "AI Financial Copilot", "category": "E", "durationMs": 19000, "file": "../skills/skill-55-ai-financial-copilot.md" }
+  ],
+  "categories": {
+    "A": "Payment Flows & Transactions",
+    "B": "Banking Infrastructure & Ledgers",
+    "C": "Wealth, Trading & Analytics",
+    "D": "Security, Compliance & KYC",
+    "E": "B2B SaaS, Lending & Credit"
+  },
+  "invocation": {
+    "patterns": ["Execute Skill #<id>", "Run skill-<id>-<slug>", "Build the <name> explainer"],
+    "resolution": "Match the id or slug against the skills array, read the file, follow its seven-part spec, write a single HTML file to output/."
+  }
+}

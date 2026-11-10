@@ -1,0 +1,642 @@
+[
+  {
+    "id": "21",
+    "slug": "compound-interest-curve",
+    "name": "Compound Interest Curve",
+    "cat": "C",
+    "hook": "An exponential curve that makes the last five years look nothing like the first five.",
+    "objective": "Show compounding mechanics: principal, interest earned, the bend in the curve, and the drift between simple and compound growth.",
+    "dur": 18000,
+    "accent": "#10B981",
+    "accent2": "#4F46E5",
+    "scenes": [
+      ["Principal Planted", "0.0s - 4.0s", "A $10,000 principal enters an empty 30-year chart.", "Axes with year and value labels, an empty plot area, a principal chip.", "Axes draw from origin outward in 500ms; the seed dot drops onto the y-axis with a 220ms spring."],
+      ["Curve Grows", "4.0s - 11.0s", "The compound curve draws year by year and the bend arrives late.", "Compound curve path, year markers every 5 years, a moving endpoint dot.", "Path draws via dashoffset mapping to 0 -> 30 years; the endpoint dot rides getPointAtLength; labels fade in as they pass."],
+      ["Simple vs Compound", "11.0s - 15.5s", "A straight simple-interest line appears far below the compound curve.", "Second straight path, a shaded gap area between the two curves.", "Straight line draws in 700ms; the gap area fades in from 0.0 to 0.16 opacity over 500ms."],
+      ["Final Value", "15.5s - 18.0s", "The 30-year endpoint locks and shows $44,677 versus $25,000.", "Endpoint callout with compound and simple totals side by side.", "Counters tween to their final values on a 600ms ease-out; callout connector draws last; hold the frame."]
+    ],
+    "vectors": [
+      ["Axes", "Chart frame", "Two 1.5px lines with tick marks every 5 years and mono tick labels"],
+      ["Compound curve", "Exponential growth", "Sampled cubic polyline of 61 points generated from the formula, not hand-drawn"],
+      ["Simple line", "Linear baseline", "Straight 2-point line in muted slate at 45% opacity"],
+      ["Gap area", "Value of compounding", "Closed path between the two series with a gradient fill at 16% opacity"],
+      ["Endpoint callout", "Result", "Card with connector rule pointing to the terminal dot"]
+    ],
+    "physics": [
+      "Compute both series from the real formula (principal * (1 + r)^t) so the curve cannot contradict the labels.",
+      "Y-axis must use a compressed scale; a linear axis makes early years unreadable on small screens.",
+      "Curve drawing uses stroke-dasharray equal to pathLength with a matching dashoffset.",
+      "Do not animate the curve beyond 11 seconds; the last 7 seconds are for interpretation, not motion."
+    ],
+    "data": "const COMPOUND = { principal: 10000, annualRate: 0.05, years: 30, compoundedPerYear: 12, finalCompound: 44677.44, finalSimple: 25000.00, ruleOf72Years: 14.4 };",
+    "notes": "Scale the chart to the actual computed final value at load. Hard-coded axis maxima drift from the math and break credibility."
+  },
+  {
+    "id": "22",
+    "slug": "portfolio-rebalance",
+    "name": "Portfolio Rebalance",
+    "cat": "C",
+    "hook": "A donut that quietly repairs itself back to target weights.",
+    "objective": "Explain drift and rebalancing: how allocation drifts with market moves, how target bands trigger a rebalance, and the resulting trades.",
+    "dur": 17000,
+    "accent": "#4F46E5",
+    "accent2": "#10B981",
+    "scenes": [
+      ["Target Allocation", "0.0s - 3.5s", "The target donut settles at 60/25/15 across equities, bonds and cash.", "Three-segment donut, legend rows with target percentages, total value in the center.", "Segments sweep from 0 to their target angles over 900ms with a 60ms stagger."],
+      ["Drift", "3.5s - 8.5s", "Equities rally and the weights drift to 68/20/12.", "Same donut with segments morphing; drift arrows and a drift badge reading +8.0%.", "Arc angles interpolate on a 1.2s ease; the drift badge counts up and turns amber past the 5% band."],
+      ["Rebalance Trades", "8.5s - 13.5s", "Two trades fire: sell equities, buy bonds and cash.", "Trade tickets with SELL 8% and BUY 5% / 3%, a trade cost line at 0.04%.", "Tickets slide in from the donut at 120ms offsets along radial directions."],
+      ["Restored", "13.5s - 17.0s", "The donut returns to target and the status clears.", "Donut at 60/25/15, emerald restored chip, next review date.", "Arcs interpolate back over 800ms; badge fades out; the center total is unchanged throughout to prove no value was created."]
+    ],
+    "vectors": [
+      ["Donut segments", "Allocation", "Three arcs on r=120 with a 34px stroke and rounded caps at the boundaries"],
+      ["Legend rows", "Weights", "Three rows with a colour swatch, label, and mono percentage"],
+      ["Drift badge", "Deviation", "Pill showing signed percentage, amber above threshold, slate within band"],
+      ["Trade tickets", "Execution", "Compact cards with side, asset and weight delta"],
+      ["Center total", "Portfolio value", "Mono 36px value with a smaller label"]
+    ],
+    "physics": [
+      "Segment angles must be derived from weights at every frame; never animate stroke-dasharray with hard-coded numbers.",
+      "The center total must not change during rebalancing. Value conservation is the proof of correctness.",
+      "The drift threshold band is 5%; show it numerically so the alert is explainable.",
+      "Rebalance motion is deliberately calmer than the drift motion; correction should feel reassuring."
+    ],
+    "data": "const REBALANCE = { total: 128_400, target: { equities: 0.60, bonds: 0.25, cash: 0.15 }, drifted: { equities: 0.68, bonds: 0.20, cash: 0.12 }, band: 0.05, tradeCostBps: 4, nextReview: 'Quarterly' };",
+    "notes": "Round displayed percentages to one decimal and make the three values sum to 100.0 exactly after rounding."
+  },
+  {
+    "id": "23",
+    "slug": "candlestick-formation",
+    "name": "Candlestick Formation",
+    "cat": "C",
+    "hook": "OHLC candles assembling body first, wick second, volume rising underneath.",
+    "objective": "Teach candle anatomy: open, high, low, close, body direction, and the relationship between volume and price movement.",
+    "dur": 18000,
+    "accent": "#10B981",
+    "accent2": "#F43F5E",
+    "scenes": [
+      ["Anatomy of One Candle", "0.0s - 5.5s", "A single candle is built with labelled callouts for O, H, L and C.", "Isolated candle at 3x scale, four callout lines with mono price labels.", "Body draws from open to close over 500ms; wicks extend outward on a 180ms stagger; labels fade in after the body completes."],
+      ["Series of Candles", "5.5s - 11.0s", "Twenty candles build left to right with real OHLC values.", "20 candles spaced 24px apart, alternating bullish and bearish fills.", "Each candle builds in 120ms with a 60ms horizontal stagger; the last candle keeps a live pulse until the scene ends."],
+      ["Volume Bars", "11.0s - 15.0s", "Volume bars rise beneath the price panel.", "Volume histogram scaled to the same bar cadence, 60% height panel.", "Bars grow from baseline on a 380ms ease-out, staggered with the candles so each pairs semantically."],
+      ["Read the Tape", "15.0s - 18.0s", "A caption reads the pattern: higher highs with falling volume.", "Annotation bracket spanning candles 12 to 20, divergence marker, a mono summary line.", "Bracket draws right to left; the divergence marker pulses once; the summary line reveals by word group."]
+    ],
+    "vectors": [
+      ["Candle body", "Open-close range", "Rect with width 14 and height derived from |close - open|"],
+      ["Wicks", "High-low range", "Two 1px vertical lines above and below the body"],
+      ["Volume bars", "Participation", "Rects with 4px gaps and a 0.55 opacity fill"],
+      ["Callout lines", "Anatomy labels", "1px leaders with 60% opacity and small terminal dots"],
+      ["Divergence bracket", "Pattern annotation", "Horizontal bracket with two down-ticks and a 1.2px stroke"]
+    ],
+    "physics": [
+      "Generate candles from a seeded OHLC series so every replay is byte-for-byte identical.",
+      "Body is drawn before wicks; reversing that order reads as a glitch.",
+      "Candle build time shortens from 260ms for the first candle to 90ms by the last, which implies acceleration.",
+      "Volume bars must never exceed the price panel's left and right bounds."
+    ],
+    "data": "const CANDLES = { symbol: 'NVDA', interval: '1D', candles: 20, first: { o: 118.40, h: 121.10, l: 117.60, c: 120.35 }, last: { o: 138.20, h: 139.40, l: 135.10, c: 136.05 }, volumeNote: 'rising price, falling volume' };",
+    "notes": "Keep the price axis visible while candles build. A floating chart without scale looks decorative rather than financial."
+  },
+  {
+    "id": "24",
+    "slug": "robo-advisor-allocation",
+    "name": "Robo-Advisor Allocation",
+    "cat": "C",
+    "hook": "One risk slider morphing an entire asset allocation in real time.",
+    "objective": "Explain risk profiling: how a single risk score maps to an allocation model, expected return range and maximum drawdown tolerance.",
+    "dur": 16000,
+    "accent": "#4F46E5",
+    "accent2": "#F43F5E",
+    "scenes": [
+      ["Risk Profile", "0.0s - 4.0s", "A five-question profile resolves to a risk score of 6 out of 10.", "Questionnaire summary card, five answered chips, a score gauge at 60%.", "Answered chips cascade in at 80ms intervals; the gauge needle sweeps 0 -> 6 with a 220ms damped spring."],
+      ["Slider Moves", "4.0s - 9.5s", "The user drags from Conservative to Aggressive.", "Horizontal slider with five labelled stops, a live allocation preview stacking to the right.", "Thumb follows a bezier path; allocation bars reflow continuously with 120ms smoothing so motion never snaps."],
+      ["Morphing Weights", "9.5s - 13.5s", "Equities, bonds and alternatives re-weight with each stop.", "Stacked horizontal bars, weight labels in mono, an expected return band chip.", "Bars interpolate from current to target over 400ms per stop; text labels crossfade only after the bars settle."],
+      ["Model Locked", "13.5s - 16.0s", "The allocation locks in with expected return and drawdown figures.", "Locked allocation bar, return band 4.2% to 6.8%, max drawdown 18%.", "Bars gain a 1px indigo outline; figures count in; hold the final state for 900ms."]
+    ],
+    "vectors": [
+      ["Risk gauge", "Profile score", "240-degree arc with 10 tick marks and a needle path"],
+      ["Risk slider", "User control", "Track with five stop dots and a draggable thumb 18px wide"],
+      ["Allocation bars", "Portfolio mix", "Stacked rects with 2px gaps and inline mono percentage labels"],
+      ["Return band", "Expected outcome", "Horizontal band with a midpoint marker and range labels"],
+      ["Drawdown note", "Risk disclosure", "Small mono caption with a rose accent rule on the left"]
+    ],
+    "physics": [
+      "Allocation must always sum to 100%; clamp and normalize after interpolation rather than trusting raw lerps.",
+      "The slider is a real interactive control. Pointer drag must update the render pipeline, not just CSS.",
+      "Expected return ranges widen as risk rises; that widening is the teaching moment.",
+      "Show maximum drawdown alongside return. Presenting upside without downside is the classic robo-advisor failure."
+    ],
+    "data": "const ROBO = { riskScore: 6, models: [{ name: 'Conservative', equities: 0.25, bonds: 0.65, alts: 0.10, ret: [0.028, 0.041], dd: 0.07 }, { name: 'Balanced', equities: 0.55, bonds: 0.35, alts: 0.10, ret: [0.038, 0.058], dd: 0.12 }, { name: 'Aggressive', equities: 0.85, bonds: 0.08, alts: 0.07, ret: [0.042, 0.068], dd: 0.18 }] };",
+    "notes": "Always pair the expected return with a drawdown figure in the same visual block. It is a compliance-friendly pattern and looks more premium."
+  },
+  {
+    "id": "25",
+    "slug": "dividend-drip",
+    "name": "Dividend Reinvestment",
+    "cat": "C",
+    "hook": "Dividend droplets falling back into the principal bucket to compound the share count.",
+    "objective": "Show dividend mechanics and DRIP: ex-date, payment, per-share distribution, and reinvestment that increases share count.",
+    "dur": 16000,
+    "accent": "#10B981",
+    "accent2": "#4F46E5",
+    "scenes": [
+      ["Ex-Dividend Date", "0.0s - 3.5s", "A calendar marks the ex-date and the entitlement window closes.", "Month calendar grid, an ex-date cell highlighted, entitlement badge.", "Highlight cell fills top-down over 300ms; the entitlement badge drops in with a 200ms spring."],
+      ["Dividend Declared", "3.5s - 7.5s", "The distribution is calculated at $0.24 per share across 412 shares.", "Per-share figure, share count, total distribution $98.88, payout ratio chip.", "The multiplication builds left to right: 0.24 x 412 = 98.88 with each operand entering sequentially."],
+      ["Cash Lands", "7.5s - 11.5s", "Droplets fall from the holding into the cash balance.", "Stock holding card above, cash bucket below, three droplets with trails.", "Droplets fall 90px on an ease-in with 140ms stagger; the cash counter increments as each lands."],
+      ["DRIP Reinvests", "11.5s - 16.0s", "Cash converts back into 0.36 additional shares and the count grows.", "Reinvestment arrow back to the holding, share counter 412 -> 412.36, cost basis note.", "Arrow traces the reverse path; the share counter uses 2 decimals and a 300ms ease-out; a small compounding note appears."]
+    ],
+    "vectors": [
+      ["Calendar grid", "Date context", "7x5 cell grid with 1px separators and a mono date header"],
+      ["Holding card", "Position", "340x120 with ticker, share count and market value"],
+      ["Cash bucket", "Distribution destination", "Open-top container with a fill level and a mono balance"],
+      ["Droplets", "Cash movement", "Teardrop paths with a gradient fill and a short trailing streak"],
+      ["Reinvestment arrow", "DRIP path", "Curved arrow with a gradient stroke from emerald to indigo"]
+    ],
+    "physics": [
+      "Share count increases with each reinvestment; it must never decrease during this skill.",
+      "Cash and share values must be mathematically linked by the stated share price.",
+      "Droplet easing is ease-in only. Gravity accelerates, and a bouncy fall looks wrong.",
+      "The final share count uses two decimals; the ticker label stays fixed width to prevent jitter."
+    ],
+    "data": "const DRIP = { ticker: 'SCHD', shares: 412, pricePerShare: 81.45, dividendPerShare: 0.24, totalDividend: 98.88, exDate: '2026-09-24', payDate: '2026-09-29', sharesBought: 1.21, newShares: 413.21 };",
+    "notes": "Recompute the share purchase from the dividend total and the share price at load. Two independent numbers almost always disagree."
+  },
+  {
+    "id": "26",
+    "slug": "tax-loss-harvesting",
+    "name": "Tax-Loss Harvesting",
+    "cat": "C",
+    "hook": "A red position swapped into a correlated asset while the tax bill shrinks.",
+    "objective": "Explain harvesting: realizing a loss, avoiding a wash sale with a correlated substitute, and reducing taxable gains for the year.",
+    "dur": 18000,
+    "accent": "#F43F5E",
+    "accent2": "#10B981",
+    "scenes": [
+      ["Underwater Position", "0.0s - 4.0s", "A holding sits 18% below cost basis with an unrealized loss of $4,200.", "Holding card with cost basis and market value, an underwater area chart in rose.", "The chart's filled area is clipped at the cost-basis line; the loss figure counts up in rose with tabular-nums."],
+      ["Harvest Trigger", "4.0s - 8.5s", "The position is sold, realizing the loss.", "Sell ticket, realized loss badge, a ledger entry with a signed amount.", "The sell ticket slides across the holding card; the realized badge stamps in with a 1.1 scale overshoot."],
+      ["Correlated Swap", "8.5s - 13.5s", "Proceeds rotate into a correlated but not substantially identical fund.", "Two fund cards side by side with a rotation arrow and a similarity chip reading 0.91 correlation.", "Arrow draws between the cards over 500ms; the similarity chip resolves after the arrow completes."],
+      ["Tax Saved", "13.5s - 18.0s", "The tax bar drops by $1,050 while market exposure stays constant.", "Tax bar comparison before and after, wash-sale guard note, exposure continuity badge.", "The tax bar shrinks over 700ms; the exposure badge stays fully lit throughout to prove continuity; hold the frame."]
+    ],
+    "vectors": [
+      ["Underwater chart", "Unrealized position", "Area path in rose at 18% opacity with a dashed cost-basis line"],
+      ["Fund cards", "Instruments", "Two 260x160 cards with ticker, name and correlation chip"],
+      ["Rotation arrow", "Substitution", "Curved arrow with a gradient stroke between card edges"],
+      ["Tax bar", "Liability", "Two stacked horizontal bars labeled BEFORE and AFTER"],
+      ["Wash-sale guard", "Rule compliance", "Shield badge with a 30-day clock icon"]
+    ],
+    "physics": [
+      "The wash-sale guard must appear before the swap completes, not after; it is the compliance point of the whole skill.",
+      "Correlation is stated, never implied by matching colour alone.",
+      "The tax bar uses the same scale before and after so the reduction is visually honest.",
+      "Keep rose for the loss and emerald for the benefit, but never on the same element simultaneously."
+    ],
+    "data": "const HARVEST = { position: 'VTI', costBasis: 23_400, marketValue: 19_200, unrealizedLoss: 4_200, harvested: 4_200, substitute: 'ITOT', correlation: 0.91, taxRate: 0.25, taxSaved: 1_050, washSaleDays: 30 };",
+    "notes": "Always label this as illustrative and not tax advice in the closing caption. The skill is educational, not a recommendation engine."
+  },
+  {
+    "id": "27",
+    "slug": "fractional-shares",
+    "name": "Fractional Shares",
+    "cat": "C",
+    "hook": "One share of a $1,240 stock shattering into 240 affordable hexagons.",
+    "objective": "Show share fractionalization: slicing a whole share into proportional units, distributing them to retail buyers, and re-aggregating ownership.",
+    "dur": 15000,
+    "accent": "#4F46E5",
+    "accent2": "#06B6D4",
+    "scenes": [
+      ["Whole Share", "0.0s - 3.0s", "A single share sits at $1,240 with a lock icon indicating unaffordability.", "Large hexagon at center, price callout, a lock glyph, a $50 budget chip.", "Hexagon rotates 0 -> 12deg while settling; the lock glyph pulses twice and dissolves at the end of the scene."],
+      ["Slicing", "3.0s - 7.5s", "The share shatters into a hex grid of proportional units.", "19 hexagons in a honeycomb, each 1/19 of the whole, a slicing radial wipe.", "A radial wipe from center-out reveals the grid over 700ms; each hex lands with a 20ms stagger."],
+      ["Distribution", "7.5s - 11.5s", "Units fly out to five retail buyers in proportion to their budgets.", "Five buyer nodes with budget chips, allocator arcs, share counts at 4 decimals.", "Arcs draw outward at 90ms offsets; each buyer's share counter increments as its arc lands."],
+      ["Re-aggregated", "11.5s - 15.0s", "The distributed units shown back together prove ownership equals one full share.", "Hexes returning to the grid, a 1.0000 share total, a custody note.", "Hexes return along the same arcs in reverse; the total counter ticks to exactly 1.0000 and holds."]
+    ],
+    "vectors": [
+      ["Hexagon grid", "Fractional units", "19 hexagons generated from axial coordinates, 2px gaps, 1px strokes"],
+      ["Lock glyph", "Barrier to entry", "Padlock path 36px tall at 60% opacity"],
+      ["Buyer nodes", "Retail participants", "Five 44px circles with initials and mono budget chips"],
+      ["Allocator arcs", "Distribution", "Five curved paths with gradient strokes and small arrowheads"],
+      ["Total counter", "Ownership proof", "Mono 40px with 4 decimals and a smaller 'shares' label"]
+    ],
+    "physics": [
+      "Fractional quantities must sum to exactly 1.0000 after rounding; distribute the remainder to the largest allocation.",
+      "Hexagon geometry is computed from axial coordinates at load, then reused for both explosion and return.",
+      "The slicing wipe is radial and monotonic; it must not pulse or reverse mid-animation.",
+      "Return arcs use the identical path objects as the outbound arcs so the round trip is provably symmetric."
+    ],
+    "data": "const FRACTIONAL = { ticker: 'BRK.A', sharePrice: 1240.00, budget: 50.00, units: 19, buyers: [{ name: 'Maya', budget: 200, shares: 0.1613 }, { name: 'Arjun', budget: 150, shares: 0.1210 }, { name: 'Lena', budget: 300, shares: 0.2419 }, { name: 'Tom', budget: 100, shares: 0.0806 }, { name: 'Priya', budget: 490, shares: 0.3952 }] };",
+    "notes": "Total shares must read exactly 1.0000. Fractional-share demos that land on 0.9999 look like a rounding bug in production."
+  },
+  {
+    "id": "28",
+    "slug": "order-book-depth",
+    "name": "Order Book Depth",
+    "cat": "C",
+    "hook": "Bid and ask walls breathing around a price that refuses to sit still.",
+    "objective": "Explain market microstructure: bid-ask spread, depth ladder, imbalance, and how a large order walks the book.",
+    "dur": 17000,
+    "accent": "#10B981",
+    "accent2": "#F43F5E",
+    "scenes": [
+      ["Book Snapshot", "0.0s - 4.0s", "Ten levels of bids and asks populate around a mid price of $184.20.", "Two ladder columns, depth bars scaled to size, spread gutter in the center.", "Rows appear from the inside out at 60ms intervals; the spread gutter draws a mono measurement line."],
+      ["Live Updates", "4.0s - 8.5s", "Sizes flicker as orders are added and pulled at the top of book.", "Depth bars resizing, flashing size deltas in green and rose.", "Each update flashes for 120ms then decays over 400ms; new rows insert with a 6px vertical slide."],
+      ["Imbalance", "8.5s - 12.5s", "Bid depth outweighs ask depth three to one and the price starts to lean.", "A balance meter tilting toward bids, an imbalance ratio of 3.1x, mid price ticking up.", "Meter tilt follows the ratio with 220ms smoothing; the mid ticker rolls its last digit per tick."],
+      ["Large Order Walks", "12.5s - 17.0s", "A market buy sweeps four ask levels and the spread widens.", "Order ticket of 2,400 shares, ask rows consumed sequentially, new spread measurement.", "Rows fade and collapse in sequence at 160ms; depth bars shrink to zero; the spread gutter re-measures with a 300ms ease."]
+    ],
+    "vectors": [
+      ["Depth ladder", "Book structure", "20 rows across two columns with 1px separators and right-aligned mono sizes"],
+      ["Depth bars", "Liquidity", "Background rects scaled to cumulative size at 14% opacity"],
+      ["Spread gutter", "Bid-ask spread", "Central 60px column with a bracket and a mono measurement"],
+      ["Balance meter", "Imbalance", "Horizontal seesaw with a sliding fulcrum and a ratio label"],
+      ["Order ticket", "Aggressive order", "Compact card with side, quantity and estimated fill"]
+    ],
+    "physics": [
+      "Depth bars are cumulative, not per-level; per-level bars misrepresent book shape.",
+      "Mid price updates only after both sides finish their row insertions.",
+      "The imbalance meter must not tilt faster than the underlying ratio changes.",
+      "Flash decays are essential; without them rapid updates become strobe-like and unwatchable."
+    ],
+    "data": "const ORDER_BOOK = { symbol: 'AAPL', mid: 184.20, spreadCents: 2, bidDepth: 48_200, askDepth: 15_400, imbalance: 3.13, order: { side: 'BUY', qty: 2400, type: 'MARKET' }, levels: 10 };",
+    "notes": "Cap live update frequency at roughly 2 per second. Real tick data is unreadable at video speed and reads as visual noise."
+  },
+  {
+    "id": "29",
+    "slug": "net-worth-aggregator",
+    "name": "Net Worth Aggregator",
+    "cat": "C",
+    "hook": "Every account on one screen, liabilities subtracting instead of hiding.",
+    "objective": "Show net worth computation: linking accounts, summing assets, subtracting liabilities, and tracking the month-over-month delta.",
+    "dur": 16000,
+    "accent": "#10B981",
+    "accent2": "#F43F5E",
+    "scenes": [
+      ["Link Accounts", "0.0s - 4.0s", "Four accounts connect with a verified badge each.", "Four institution cards with logo glyphs, connection status, loading shimmer.", "Shimmer sweeps left to right twice; each card flips to a verified state with a 180ms crossfade."],
+      ["Assets Rise", "4.0s - 8.0s", "Checking, brokerage, retirement and property sum into total assets.", "Asset stack with individual values, a running subtotal, emerald accent rules.", "Values count in on a 500ms ease-out with 100ms stagger; the subtotal resolves last."],
+      ["Liabilities Subtract", "8.0s - 12.5s", "Credit card and mortgage appear in rose and subtract from the total.", "Liability rows below with minus signs, a subtraction rail, subtotal moving downward.", "The subtraction rail sweeps downward over 600ms; the running total animates down while assets stay fixed."],
+      ["One Number", "12.5s - 16.0s", "The net worth figure locks in with a 3.2% month-over-month delta.", "Large mono net worth figure, MoM delta chip, a small sparkline of the last 6 months.", "Final counter lands on an exact value; the delta chip slides in from the right with a 200ms spring; sparkline draws in 500ms."]
+    ],
+    "vectors": [
+      ["Institution cards", "Connected sources", "160x96 rounded rects with a logo glyph, name and status dot"],
+      ["Asset stack", "Positive balances", "Row stack with 2px emerald rules on the left edge"],
+      ["Subtraction rail", "Liability math", "Vertical rail with a downward arrow and a minus operator glyph"],
+      ["Net worth figure", "Single truth", "Mono 56px with tabular-nums and a currency symbol at 60% size"],
+      ["MoM sparkline", "Trend", "Six-point polyline with a soft area fill and an endpoint dot"]
+    ],
+    "physics": [
+      "The running total must equal assets minus liabilities at every frame, computed rather than tweened independently.",
+      "Liability rows never use the same green as assets, even at low opacity.",
+      "Negative values use a true minus sign, not a hyphen.",
+      "The final number is the primary type on screen; everything else shrinks by at least one step."
+    ],
+    "data": "const NET_WORTH = { assets: [{ name: 'Checking', value: 18_400 }, { name: 'Brokerage', value: 96_200 }, { name: '401(k)', value: 212_800 }, { name: 'Home', value: 540_000 }], liabilities: [{ name: 'Credit Card', value: 4_150 }, { name: 'Mortgage', value: 318_600 }], totalAssets: 867_400, totalLiabilities: 322_750, netWorth: 544_650, momDelta: 0.032 };",
+    "notes": "This is the skill where tabular-nums matters most. A shifting net worth figure during counting looks like a rendering defect."
+  },
+  {
+    "id": "30",
+    "slug": "dca-simulator",
+    "name": "Dollar-Cost Averaging",
+    "cat": "C",
+    "hook": "Twelve buy markers smoothing a violent market wave into a calm average.",
+    "objective": "Contrast lump-sum and DCA entry under volatility: fixed periodic buys, average cost basis, and the smoothed entry line.",
+    "dur": 18000,
+    "accent": "#4F46E5",
+    "accent2": "#10B981",
+    "scenes": [
+      ["Volatile Market", "0.0s - 4.5s", "A jagged 12-month price line draws across the chart.", "Price polyline with 48 seeded points, y-axis in dollars, month labels.", "Line draws over 1.8s with a 240ms ambient flicker on the endpoint dot; volatility is visible but never frantic."],
+      ["Lump Sum Entry", "4.5s - 8.5s", "A single $12,000 buy lands at an unlucky local high.", "One large buy marker at the peak, an entry price callout, a rose cost-basis line.", "Marker drops 120px on an ease-in and bounces 4px; the cost-basis line draws horizontally and stays rose."],
+      ["Monthly Buys", "8.5s - 14.5s", "Twelve $1,000 buys distribute across the year.", "Twelve small markers at month intervals, each with a quantity label.", "Markers appear at 140ms intervals in month order; a running average line lags behind them smoothly."],
+      ["Average Wins", "14.5s - 18.0s", "The DCA cost basis sits below the lump-sum basis and shows a better return.", "Two cost-basis lines converging onto the final price, a comparison callout.", "Comparison callout draws a connector between the two lines; final figures count in; hold for 900ms."]
+    ],
+    "vectors": [
+      ["Price line", "Market path", "48-point polyline from a seeded random walk with 1.8px stroke"],
+      ["Buy markers", "Entry points", "Filled circles 10px with a 24px halo for the lump sum and 16px for DCA"],
+      ["Cost-basis lines", "Average entry", "Dashed horizontal lines, rose for lump sum and indigo for DCA"],
+      ["Month axis", "Time scale", "12 tick labels with 1px guides at 20% opacity"],
+      ["Comparison callout", "Outcome", "Card with two rows, percentages and a delta chip"]
+    ],
+    "physics": [
+      "DCA average is recomputed cumulatively after each buy; never interpolate an average from the final value.",
+      "The lump-sum peak is chosen from the actual seeded series, not placed arbitrarily.",
+      "Markers appear in strict chronological order and never overlap month guides.",
+      "Use the same y-scale for both strategies so the comparison is fair."
+    ],
+    "data": "const DCA = { budget: 12_000, months: 12, monthly: 1_000, lumpSumEntry: 141.80, dcaAverage: 128.34, finalPrice: 136.20, lumpSumReturn: -0.0395, dcaReturn: 0.0612, asset: 'VOO' };",
+    "notes": "Show the losing case for DCA at least once in a variant. Skills that always prove the author's point read as marketing, not explanation."
+  },
+  {
+    "id": "31",
+    "slug": "biometric-kyc",
+    "name": "Biometric KYC",
+    "cat": "D",
+    "hook": "A face mesh that scans, liveness-checks and becomes a verified badge.",
+    "objective": "Show identity verification: document capture, biometric liveness detection, face match scoring, and verification issuance.",
+    "dur": 18000,
+    "accent": "#4F46E5",
+    "accent2": "#10B981",
+    "scenes": [
+      ["Document Capture", "0.0s - 4.5s", "A passport is framed, deskewed and read by OCR.", "Document in a viewfinder with corner brackets, detected field boxes appearing.", "Brackets snap inward; field boxes draw one at a time at 120ms; OCR text types into mono fields."],
+      ["Liveness Check", "4.5s - 9.5s", "The camera prompts a blink and a head turn, then passes liveness.", "Face silhouette with a 480-point mesh, prompt chips, a liveness progress ring.", "Mesh vertices fade in on a radial wave over 900ms; prompt chips swap at 1.4s intervals; the ring completes in emerald."],
+      ["Face Match", "9.5s - 14.0s", "The selfie and document photo are compared with a 99.2% confidence score.", "Side-by-side faces, a matching bracket, a confidence arc at 99.2%.", "The confidence arc sweeps 0 -> 99.2% over 700ms while the number counts in parallel."],
+      ["Verified Badge", "14.0s - 18.0s", "The mesh collapses into a verified badge with an audit trail entry.", "Badge with a check glyph, KYC status VERIFIED, audit trail timestamp.", "Mesh vertices converge to the badge center over 500ms; the badge pops with a 240ms spring; audit line fades in last."]
+    ],
+    "vectors": [
+      ["Document frame", "Capture target", "Rounded rect with four corner brackets and a slight perspective skew"],
+      ["Face mesh", "Biometric landmarks", "Grid of 480 small dots sampled on an elliptical face surface, 1px radius"],
+      ["Liveness ring", "Liveness progress", "Circle r=90 with a 6px stroke and rounded dash caps"],
+      ["Confidence arc", "Match score", "270-degree arc with a gradient from cyan to emerald"],
+      ["Verified badge", "Outcome", "Shield path 96px tall with a check glyph and an outer glow"]
+    ],
+    "physics": [
+      "Generate mesh vertices once and animate opacity only; moving 480 nodes individually drops frames on mid-range hardware.",
+      "Liveness prompts must change in a fixed order so the sequence is auditable.",
+      "Confidence is displayed to one decimal and never rounds to 100%.",
+      "The mesh-to-badge morph should fade the mesh out while the badge scales in; do not attempt per-vertex interpolation."
+    ],
+    "data": "const KYC = { document: 'Passport', country: 'IND', ocrFields: ['Name', 'DOB', 'Document No.'], liveness: 'passed', prompts: ['Blink', 'Turn left', 'Look ahead'], faceMatch: 0.992, status: 'VERIFIED', auditId: 'KYC-9F31C', reviewMs: 1400 };",
+    "notes": "Never fabricate a real-looking passport number or a photoreal face. Use abstract silhouettes and masked fields."
+  },
+  {
+    "id": "32",
+    "slug": "zero-knowledge-proof",
+    "name": "Zero-Knowledge Proof",
+    "cat": "D",
+    "hook": "An age check that proves the claim without ever revealing the birthdate.",
+    "objective": "Explain ZK proofs conceptually: a claim, a witness kept private, a proof generated, and a verifier checking the proof rather than the data.",
+    "dur": 19000,
+    "accent": "#4F46E5",
+    "accent2": "#06B6D4",
+    "scenes": [
+      ["The Claim", "0.0s - 4.0s", "The user asserts 'I am over 18' with no other data exposed.", "Claim card, a single boolean row, a hidden witness block shown as dots.", "The claim types in mono at 28ms per character; the witness block stays visually sealed at 25% opacity."],
+      ["Witness Stays Private", "4.0s - 8.5s", "The private inputs are hashed locally and never leave the device boundary.", "Device boundary line, witness inputs entering a hash function, output commitment 0x7f2a.", "Inputs travel inward but stop at the boundary; the commitment hash types out and then locks."],
+      ["Proof Generated", "8.5s - 13.5s", "A compact proof, not the data, crosses to the verifier.", "A 288-byte proof chip traversing a tunnel, five constraint gates lighting along the way.", "Tunnel draws; the chip travels 1200ms; gates light at 20% intervals as the proof passes each."],
+      ["Verified", "13.5s - 19.0s", "The verifier checks the proof in 12ms and returns true.", "Verifier block, check mark, a mono timing figure, a privacy summary line.", "Check draws over 360ms; timing counts from 0 to 12ms; the privacy line fades in and holds."]
+    ],
+    "vectors": [
+      ["Claim card", "Statement to prove", "320x120 with a mono claim string and a boolean result row"],
+      ["Witness block", "Private inputs", "Rounded rect filled with a dot pattern to imply redaction"],
+      ["Commitment hash", "Binding value", "Mono 12px string with a leading 0x and a lock glyph"],
+      ["Constraint gates", "Circuit checks", "Five small rounded squares along the tunnel path"],
+      ["Verifier block", "Checking party", "260x160 with a check glyph and a timing readout"]
+    ],
+    "physics": [
+      "The witness must never visually cross the device boundary. That is the whole claim of the skill.",
+      "Gate lighting is sequential and tied to proof position, not to a timer.",
+      "The proof chip is visibly smaller than the data blocks; size conveys succinctness.",
+      "Avoid mathematical notation on screen beyond simple inequalities; the audience is not cryptographers."
+    ],
+    "data": "const ZK = { claim: 'age >= 18', witness: { birthYear: 1994, documentId: 'redacted' }, commitment: '0x7f2a9c41', proofBytes: 288, verifyMs: 12, scheme: 'Groth16', verified: true };",
+    "notes": "Say 'the verifier learns only that the claim is true'. Any stronger guarantee is technically inaccurate."
+  },
+  {
+    "id": "33",
+    "slug": "end-to-end-encryption",
+    "name": "End-to-End Encryption",
+    "cat": "D",
+    "hook": "A readable amount that turns to noise in transit and reassembles at the destination.",
+    "objective": "Show E2E encryption: key exchange, plaintext to ciphertext at the sender, cipher transport, and decryption at the receiver.",
+    "dur": 17000,
+    "accent": "#06B6D4",
+    "accent2": "#4F46E5",
+    "scenes": [
+      ["Plaintext", "0.0s - 3.5s", "The sender composes a transfer of $2,400 to a known beneficiary.", "Composer card with a readable amount and memo line, a padlock at 40% opacity.", "The padlock lifts and fills as the scene ends; amount text stays perfectly legible until encryption begins."],
+      ["Key Exchange", "3.5s - 7.5s", "Ephemeral keys cross the channel and a shared secret is derived.", "Two key glyphs traveling toward each other, a shared-secret node in the middle, a derivation formula chip.", "Key glyphs meet at center with a 180ms ease; the shared node pulses once and shows a truncated fingerprint."],
+      ["Ciphertext", "7.5s - 12.5s", "The payload scrambles into blocks mid-flight.", "Paylaod orb transforming into a 3x4 block grid of hex characters, an intermediary node unable to read it.", "Characters resolve per block at 40ms intervals; the intermediary node shows a blind-eye glyph and a 'no key' label."],
+      ["Decrypted", "12.5s - 17.0s", "The receiver decrypts and the original amount reappears unchanged.", "Receiver card, the same amount restored, a checksum line confirming integrity.", "Hex blocks resolve back into text; a checksum row crossfades to emerald; the padlock closes and holds."]
+    ],
+    "vectors": [
+      ["Composer card", "Sender surface", "360x160 with an amount field, memo line and a send button"],
+      ["Key glyphs", "Cryptographic keys", "Two key silhouettes with 6-tooth bit patterns, mirrored"],
+      ["Cipher blocks", "Encrypted payload", "3x4 grid of 28x28 rounded rects with mono hex pairs"],
+      ["Intermediary node", "Untrusted hop", "Circle with a blind-eye glyph and a muted border"],
+      ["Integrity checksum", "Tamper evidence", "Mono line with a check glyph and a 6-character digest"]
+    ],
+    "physics": [
+      "The scrambled state must use the same character count as the plaintext, so the viewer senses a transformation rather than a replacement.",
+      "Keys meet at center with mirrored easing so neither side appears dominant.",
+      "The intermediary hop gets a visible 'no key' state; silence here implies the middle can read traffic.",
+      "Decryption lands on exactly the original amount, digit for digit."
+    ],
+    "data": "const E2E = { sender: 'Maya R.', receiver: 'Arjun S.', amount: 2400, currency: 'USD', cipher: 'AES-256-GCM', keyExchange: 'X25519', intermediaryHops: 1, checksum: '9f3ad1', decryptMs: 2 };",
+    "notes": "This skill pairs well with 13 and 36 for a security series. Keep the cipher suite labels in the same mono style across all three."
+  },
+  {
+    "id": "34",
+    "slug": "aml-fraud-radar",
+    "name": "AML Fraud Radar",
+    "cat": "D",
+    "hook": "A radar that constantly sweeps a stream of transactions and quarantines one anomaly.",
+    "objective": "Explain real-time transaction monitoring: streaming ingest, rule and model scoring, anomaly isolation, and case escalation.",
+    "dur": 19000,
+    "accent": "#F43F5E",
+    "accent2": "#06B6D4",
+    "scenes": [
+      ["Stream Ingest", "0.0s - 4.0s", "Transactions stream in as a dense field of moving dots.", "Radar circle with concentric rings, 60 transaction dots on orbital paths, a live count.", "Dots spawn at the rim and decay toward center; count increments at roughly 8 per second in mono."],
+      ["Radar Sweep", "4.0s - 8.0s", "A rotating sweep beam scores each batch against AML rules.", "Wedge sweep with a trailing gradient, score badges appearing on dots.", "The sweep rotates 360deg in 3.2s; dots flash their score as the beam passes; beam is clipped to the radar circle."],
+      ["Anomaly Isolated", "8.0s - 13.5s", "One dot breaks pattern: $9,800 structured into three transfers.", "A single dot turns rose and slows, expanding into a detail card with three linked amounts.", "The dot pulls toward center while others dim to 30%; the detail card unfurls with a 300ms ease; structure links draw between amounts."],
+      ["Quarantine", "13.5s - 19.0s", "The account is held, a case opens and a SAR review is scheduled.", "Quarantine ring around the dot, case card CASE-4471, escalation ladder.", "The ring closes over 400ms; the case card slides in from the right; the escalation ladder ticks through three stages and holds."]
+    ],
+    "vectors": [
+      ["Radar", "Monitoring scope", "Three concentric circles at 90, 150 and 210 radius, 1px strokes at 18% opacity"],
+      ["Sweep beam", "Inspection", "Wedge path with a conic-style gradient, clipped to the outer circle"],
+      ["Transaction dots", "Events", "4px circles with 12% fill and a 1px stroke"],
+      ["Anomaly card", "Case detail", "280x180 card with three amount rows and a structure link graphic"],
+      ["Quarantine ring", "Hold", "Dashed rose ring at 40% opacity with a lock glyph at the top"]
+    ],
+    "physics": [
+      "The sweep is an ambient rotation gated by scene progress so pausing freezes it cleanly.",
+      "Only one dot may become the anomaly; competing highlights destroy the focus of the scene.",
+      "Dimming non-relevant dots to 30% is mandatory before the detail card appears.",
+      "Avoid naming a real regulation action as certain. Use 'review opened', not 'SAR filed'."
+    ],
+    "data": "const AML = { streamRate: '8 txn/s', rules: ['structuring', 'velocity', 'geo mismatch'], anomaly: { account: 'AC-9921', amount: 9800, splits: [3200, 3300, 3300], window: '36h', score: 0.94 }, caseId: 'CASE-4471', action: 'account hold + review' };",
+    "notes": "This is the most sensitive skill in the set. Keep the language procedural and avoid implying guilt about a named party."
+  },
+  {
+    "id": "35",
+    "slug": "2fa-totp-countdown",
+    "name": "2FA TOTP Countdown",
+    "cat": "D",
+    "hook": "Six digits that expire in thirty seconds, with the ring closing in.",
+    "objective": "Explain TOTP two-factor authentication: shared secret, 30-second time step, HMAC derivation, and verification window tolerance.",
+    "dur": 15000,
+    "accent": "#4F46E5",
+    "accent2": "#F43F5E",
+    "scenes": [
+      ["Shared Secret", "0.0s - 3.5s", "A secret is provisioned to the phone once, shown as a masked seed and a QR glyph.", "Masked secret string in mono, a small QR glyph, an enrolled-device row.", "The secret reveals two characters at a time then re-masks; the QR glyph fades in at 40% opacity."],
+      ["Six Digits", "3.5s - 8.0s", "The authenticator computes a code and shows six digits.", "Six digit cells at 40px mono, a 30-second countdown ring, a copy button.", "Digits land one at a time at 60ms intervals; the ring starts full and depletes clockwise with a linear sweep."],
+      ["Time Step", "8.0s - 12.0s", "The counter reaches zero and a new code rolls in.", "Ring empties, digits crossfade to a new set, a mono timestamp of the time step.", "The ring empties over the full 30s at 1x; when it wraps, digits flip with a 180ms vertical crossfade."],
+      ["Verified", "12.0s - 15.0s", "The code is accepted within the drift window and a session starts.", "Verify field, check glyph, drift window of +/-1 step, session token chip.", "Check draws in 300ms; the drift window shows a small bracket around the current step; session chip lands last."]
+    ],
+    "vectors": [
+      ["Digit cells", "Code display", "Six 48x64 rounded rects with 32px mono digits and hairline borders"],
+      ["Countdown ring", "Time step", "Circle r=76 with an 8px stroke, stroke-dasharray mapped to seconds remaining"],
+      ["Secret seed", "Provisioning", "Masked mono string with 6 visible characters and a copy glyph"],
+      ["Drift bracket", "Verification tolerance", "Bracket spanning three time steps, centered on the current one"],
+      ["Session chip", "Outcome", "Pill with a truncated token and an expiry label"]
+    ],
+    "physics": [
+      "The countdown ring depletes linearly because it represents real time; a bezier here would be dishonest.",
+      "Digit rollover is a vertical crossfade, never a slide that keeps both codes legible at once.",
+      "Drift tolerance is shown as a plus or minus one step bracket, not described only in captions.",
+      "Cap the loop at one or two rollovers so the video does not feel like a waiting screen."
+    ],
+    "data": "const TOTP = { digits: 6, stepSeconds: 30, algorithm: 'SHA-1', driftSteps: 1, code: '481 920', previous: '77 4 206', verifiesAt: '98.4%' };",
+    "notes": "Format the code in two groups of three for legibility, and keep the underlying value in a single mono string so copying still works."
+  },
+  {
+    "id": "36",
+    "slug": "tokenization-vault",
+    "name": "Tokenization Vault",
+    "cat": "D",
+    "hook": "A 16-digit PAN going in and a harmless token coming out.",
+    "objective": "Show card tokenization: PAN capture inside a secure boundary, token generation, and downstream use where the real PAN never appears.",
+    "dur": 16000,
+    "accent": "#4F46E5",
+    "accent2": "#06B6D4",
+    "scenes": [
+      ["PAN Entry", "0.0s - 3.5s", "The card number is entered inside a hardened input field.", "Input field with a shield boundary, digits masked after the fourth, a keypad hint.", "Digits reveal for 300ms then mask; the shield boundary draws around the field at 60% opacity."],
+      ["Into the Vault", "3.5s - 7.5s", "The PAN travels into an isolated vault that never returns it.", "Vault door with concentric rings, one-way ingress arrow, a strict no-egress marker.", "The ingress arrow draws once, then the vault closes with a 400ms rotation; the no-egress marker pulses once."],
+      ["Token Generated", "7.5s - 11.5s", "A format-preserving token emerges with the same shape but no value.", "Token string 4127 88xx xxxx 3021 in mono, format-preserving badge, scope chip.", "Token characters type in at 30ms; the suffix 3021 locks with a 1.06 scale overshoot; the badge fades in."],
+      ["Token in Use", "11.5s - 16.0s", "A merchant charges the token and never touches the PAN.", "Merchant checkout card using the token, an authorization approval, a PAN-never-seen note.", "Checkout card slides in; approval check draws; the closing note fades in over 400ms with a lock glyph."]
+    ],
+    "vectors": [
+      ["Hardened input", "Capture surface", "320x56 field with a 1.5px shield-styled border and a lock glyph"],
+      ["Vault", "Secure boundary", "Concentric rings with a central keyhole and a sealed hatch"],
+      ["Token string", "Substitute value", "Mono 20px with grouped 4-character blocks and dimmed middle groups"],
+      ["Merchant card", "Downstream use", "300x160 checkout panel with a token label and an approve button"],
+      ["No-egress marker", "Vault property", "Circle with a diagonal slash over an arrow pointing outward"]
+    ],
+    "physics": [
+      "The PAN must never be rendered in full, at any frame, in any state. Mask from the fifth digit onward.",
+      "The vault closes before the token appears; concurrent motion implies the PAN became the token, which is wrong.",
+      "The token uses format-preserving grouping so it reads as a card number without being one.",
+      "One-way ingress and no-egress markers appear in the same scene; together they tell the whole story."
+    ],
+    "data": "const TOKEN = { panMasked: '4127 88** **** 3021', token: 'tk_9f2a41c8b7e3', formatPreserving: true, scope: 'merchant: kettles-co', network: 'Visa Token Service', reuse: 'single merchant' };",
+    "notes": "Use a clearly invalid test BIN such as 4127 88 with masked middle groups. Never use a plausible live-looking full PAN."
+  },
+  {
+    "id": "37",
+    "slug": "role-based-access",
+    "name": "Role-Based Access Control",
+    "cat": "D",
+    "hook": "An approval chain that stops a $250,000 payout until the right three people sign.",
+    "objective": "Show RBAC plus approval policy: role assignment, permission scope, dual control on large payouts, and an audited approval chain.",
+    "dur": 17000,
+    "accent": "#4F46E5",
+    "accent2": "#10B981",
+    "scenes": [
+      ["Team Hierarchy", "0.0s - 4.0s", "A four-node org tree loads with roles attached to each node.", "Tree with connectors, role chips ADMIN, APPROVER, INITIATOR, VIEWER.", "Nodes appear top-down over 500ms; connectors draw after their endpoints exist; role chips fade in 120ms later."],
+      ["Payout Initiated", "4.0s - 8.5s", "An initiator submits a $250,000 vendor payout.", "Payout card with amount, vendor, and a policy badge reading DUAL APPROVAL REQUIRED.", "The policy badge pulses rose twice; the payout card cannot advance until the first approval lands."],
+      ["Approval Chain", "8.5s - 13.5s", "Two approvers must sign; one attempts an out-of-policy approval and is blocked.", "Two approval slots, a blocked attempt card with a 403 message, an audit log line.", "The blocked attempt rebounds 3px and greys out; the audit line appends with a mono timestamp."],
+      ["Released", "13.5s - 17.0s", "Both approvals land and the payout releases with a full audit trail.", "Two green approval badges, a release rail to the vendor, three audit rows.", "Badges flip to approved at 200ms intervals; the release rail draws in 600ms; audit rows fill last."]
+    ],
+    "vectors": [
+      ["Org tree", "Hierarchy", "Four 64px nodes with orthogonal connectors and rounded joints"],
+      ["Role chips", "Permissions", "Compact pills with uppercase role names and a leading dot"],
+      ["Policy badge", "Control requirement", "Rose-outlined pill with a lock glyph and uppercase label"],
+      ["Approval slots", "Dual control", "Two 200x64 slots with avatar, role and status line"],
+      ["Audit rows", "Trail", "Three mono rows with timestamp, actor and action columns"]
+    ],
+    "physics": [
+      "The blocked approval must occur before the successful chain, so the rule is demonstrated rather than asserted.",
+      "A single approval can never release the payout, at any scrub position.",
+      "Role chips keep fixed widths across states to prevent layout shift when statuses change.",
+      "The audit trail is the quiet hero: it appears last, stays still, and never animates out."
+    ],
+    "data": "const RBAC = { payout: 250_000, vendor: 'Helios Freight', policy: 'dual approval over $100k', roles: ['ADMIN', 'APPROVER', 'INITIATOR', 'VIEWER'], blockedAttempt: { actor: 'initiator', code: 403, reason: 'self-approval' }, approvals: 2, auditRows: 3 };",
+    "notes": "Include the self-approval block. It is the most common real-world control failure and the most instructive moment in the skill."
+  },
+  {
+    "id": "38",
+    "slug": "pci-dss-shield",
+    "name": "PCI DSS Shield",
+    "cat": "D",
+    "hook": "Four defensive layers deflecting hostile traffic while valid carts pass through.",
+    "objective": "Explain defense in depth: segmenting cardholder data, layered controls, traffic filtering, and the passing of a compliant request.",
+    "dur": 17000,
+    "accent": "#4F46E5",
+    "accent2": "#F43F5E",
+    "scenes": [
+      ["Cardholder Zone", "0.0s - 4.0s", "A protected zone is drawn around the payment service.", "Boundary rect with a gradient border, zone label CDE, three inner service nodes.", "The boundary draws clockwise over 900ms; service nodes fade in after the border closes."],
+      ["Four Layers", "4.0s - 9.0s", "Firewall, WAF, encryption and tokenization layers stack in front of the zone.", "Four vertical layer panels with labels, each with a distinct icon and a 2px separator.", "Layers slide in from the left at 140ms intervals; each settles with a 4px spring."],
+      ["Hostile Traffic", "9.0s - 13.5s", "Attack packets hit the layers and are deflected with visible force.", "Six rose packets bouncing off layer surfaces, a deflection counter, an alert chip.", "Packets travel 180ms to the surface and rebound at 40% velocity; each deflect increments the counter."],
+      ["Valid Request", "13.5s - 17.0s", "A legitimate checkout request passes all four layers and succeeds.", "One indigo packet traversing all four layers, a green pass chip, a response 200 in mono.", "The packet decelerates at each layer by 15% then re-accelerates; a 200 response lands in emerald; hold."]
+    ],
+    "vectors": [
+      ["Protected zone", "CDE boundary", "Rounded rect with a 2px gradient stroke and a subtle inner glow"],
+      ["Layer panels", "Defense in depth", "Four 120x260 panels stacked with 16px gaps and icon glyphs"],
+      ["Attack packets", "Hostile traffic", "6px rose circles with a short tail and a rotation hazard glyph"],
+      ["Pass packet", "Legitimate request", "Indigo packet with a check glyph and a soft trail"],
+      ["Deflection counter", "Effectiveness", "Mono counter with a small rose accent rule"]
+    ],
+    "physics": [
+      "Deflections use a physically plausible rebound: the angle mirrors and speed drops to 40%.",
+      "The valid packet visibly decelerates through each layer, implying inspection cost.",
+      "Only one packet may be green at a time, and only in the final scene.",
+      "Hostile packets never reach the inner zone, at any frame."
+    ],
+    "data": "const PCI = { zone: 'Cardholder Data Environment', layers: ['Edge Firewall', 'WAF', 'Field Encryption', 'Tokenization'], blocked: 6, passed: 1, responseMs: 41, scope: 'PCI DSS v4.0', segmentedFrom: 'corporate network' };",
+    "notes": "Do not claim certification. Say 'designed for PCI DSS scope reduction', which is what a layered diagram can actually support."
+  },
+  {
+    "id": "39",
+    "slug": "device-fingerprinting",
+    "name": "Device Fingerprinting",
+    "cat": "D",
+    "hook": "Twenty browser signals collapsing into one stable hash.",
+    "objective": "Explain device fingerprinting for fraud prevention: signal collection, entropy, hashing, stability over time, and privacy constraints.",
+    "dur": 16000,
+    "accent": "#06B6D4",
+    "accent2": "#4F46E5",
+    "scenes": [
+      ["Signals Collected", "0.0s - 4.5s", "Twenty attributes enter from around the device frame.", "Phone frame at center, 20 labled signal chips orbiting inward, collection progress ring.", "Chips orbit at radius 240 and converge inward over 1.6s with 70ms stagger; the progress ring fills to 20/20."],
+      ["Entropy Weighting", "4.5s - 8.5s", "High-entropy signals glow brighter than generic ones.", "Signal chips at varying opacity and size, entropy bars behind three highlighted signals.", "Entropy bars grow on a 300ms ease; low-entropy chips desaturate to 45% opacity."],
+      ["Hash Merges", "8.5s - 12.5s", "All signals fold into a single fingerprint hash.", "A converging funnel, mono hash string typing out, a 32-character digest.", "Signals stream into the funnel and vanish; the hash types at 18ms per character and locks with a bracket."],
+      ["Stability Check", "12.5s - 16.0s", "The same device returns and matches the stored fingerprint with 97% confidence.", "Two hash rows side by side with a match badge, a 30-day stability ribbon.", "The second hash appears as an exact duplicate; the match badge scales in; the stability ribbon draws across the timeline."]
+    ],
+    "vectors": [
+      ["Signal chips", "Entropy sources", "20 pills with a label and a 4px leading icon dot"],
+      ["Convergence funnel", "Aggregation", "Trapezoid path with 3 internal guides"],
+      ["Hash string", "Identity digest", "Mono 14px, 32 characters, grouped in fours"],
+      ["Match badge", "Confidence", "Emerald pill with a check glyph and a percentage label"],
+      ["Stability ribbon", "Persistence", "Horizontal ribbon with day ticks over a 30-day span"]
+    ],
+    "physics": [
+      "Signal chips must not rotate individually; the whole ring rotates and chips translate inward for performance.",
+      "Entropy is visualised with size and opacity, not just colour, so it survives greyscale.",
+      "The two hashes in the stability scene must be character-identical.",
+      "Add a privacy caption: fingerprinting is consent-gated and purpose-limited in regulated markets."
+    ],
+    "data": "const FINGERPRINT = { signals: ['userAgent', 'timezone', 'screen', 'canvas', 'webgl', 'fonts', 'audio', 'plugins', 'hardwareConcurrency', 'deviceMemory', 'touchPoints', 'language', 'colorDepth', 'pixelRatio', 'platform', 'doNotTrack', 'storage', 'battery', 'networkType', 'webdriver'], highEntropy: ['canvas', 'webgl', 'fonts'], hash: 'a91f-3c7e-08b4-d52a', confidence: 0.97, stabilityDays: 30 };",
+    "notes": "Always include the consent and purpose-limitation note. Fingerprinting without that framing reads as surveillance."
+  },
+  {
+    "id": "40",
+    "slug": "instant-card-freeze",
+    "name": "Instant Card Freeze",
+    "cat": "D",
+    "hook": "Frost crawling across a virtual card the instant the toggle flips.",
+    "objective": "Show card controls: instant freeze, declining authorization attempts, and unfreeze with state sync across channels.",
+    "dur": 15000,
+    "accent": "#06B6D4",
+    "accent2": "#4F46E5",
+    "scenes": [
+      ["Toggle", "0.0s - 3.0s", "The freeze toggle flips on with a tactile response.", "Toggle switch at 64x36, a haptic pulse ring, a status label updating.", "The knob slides 28px on a spring with 6% overshoot; the pulse ring expands once at 300ms."],
+      ["Frost Spreads", "3.0s - 7.5s", "Frost grows across the card from the edges inward.", "Card face with a noise-textured frost overlay, feathered noise crystals along the border, a temperature glyph.", "Frost mask scales from 0 -> 1 with a texture reveal over 900ms; a 40px blur on the leading edge fades out as it fills."],
+      ["Attempt Declined", "7.5s - 11.5s", "An authorization attempt hits the frozen card and is declined.", "POS attempt card, a rose decline chip with code 62 (restricted card).", "The attempt chip enters and immediately bounces off with a 3px rebound; the decline code appears in mono."],
+      ["Unfreeze", "11.5s - 15.0s", "The toggle flips back and the frost retreats to reveal an active card.", "Toggle returning, frost retracting, ACTIVE status, a state-synced badge across app and wallet.", "Frost retreats over 600ms from the center outward; the card face brightens by 4% luminance; the sync badge ticks in."]
+    ],
+    "vectors": [
+      ["Virtual card", "Controlled instrument", "380x240 rounded rect with a fine grain overlay and a metallic edge"],
+      ["Frost overlay", "Frozen state", "Noise mask with 6 crystal clusters along the perimeter and a 40px feathered edge"],
+      ["Toggle", "Control", "Track with 2px inner shadow and a knob with a subtle gradient"],
+      ["Decline chip", "Blocked attempt", "Rose pill with a mono code and a cross glyph"],
+      ["Sync badge", "Cross-channel state", "Two overlapping device glyphs with a link icon and a check"]
+    ],
+    "physics": [
+      "Frost growth must originate at the card edges, not the center; that is what reads as freezing.",
+      "Declines use rose plus a numeric code, never rose alone, so the reason is explicit.",
+      "Unfreeze is faster than freeze to signal restored usability.",
+      "The toggle is interactive and must drive the same state variable used by the frost mask."
+    ],
+    "data": "const FREEZE = { card: 'Virtual Visa - 4821', status: 'FROZEN', declineCode: '62', reason: 'restricted card', attemptsBlocked: 1, syncChannels: ['App', 'Apple Wallet', 'Google Pay'], unfreezeMs: 600 };",
+    "notes": "Frost is a texture problem, not a gradient problem. Use layered noise with a feathered mask; a simple white radial gradient looks like fog, not ice."
+  }
+]

@@ -1,0 +1,642 @@
+[
+  {
+    "id": "01",
+    "slug": "p2p-transfer",
+    "name": "P2P Instant Transfer",
+    "cat": "A",
+    "hook": "Two avatar nodes passing $250.00 across a glowing instant rail in under four seconds.",
+    "objective": "Show a peer-to-peer transfer end to end: recipient selection, rail choice, packet in flight through a compliance checkpoint, and bilateral settlement with updated balances.",
+    "dur": 16000,
+    "accent": "#4F46E5",
+    "accent2": "#10B981",
+    "scenes": [
+      ["Recipient Selected", "0.0s - 3.2s", "Maya types @arjun, enters $250.00 and sees the live fee preview read $0.00.", "Left avatar node with orbital ring, handle input chip, amount field with tabular-nums counter.", "Type the handle one glyph at a time on a 40ms stagger; counter eases 0 -> 250 with cubic-bezier(0.16,1,0.3,1); avatar ring pulses once on completion."],
+      ["Rail Selection", "3.2s - 6.6s", "Three rails light up. Instant wins on latency, so the engine commits the route.", "Three stacked rail chips (Instant, Card, Bank) with latency badges, one selected with indigo glow.", "Stagger chip opacity 0 -> 1 across 180ms; selected chip scales 1 -> 1.03 with a 3px outer glow; badged text flips to 'under 4s'."],
+      ["Packet In Flight", "6.6s - 11.4s", "The payment packet crosses the rail and clears a compliance checkpoint without a hold.", "Cubic bezier rail path, glowing packet with trail, shield checkpoint at the midpoint.", "Animate stroke-dashoffset from totalLength to 0; place packet with getPointAtLength; shield ring flashes emerald for 240ms at 62% progress."],
+      ["Settlement", "11.4s - 16.0s", "Both balances update and a receipt with a reference ID slides in.", "Two balance chips, receipt card with reference ID, success checkmark stroke.", "Counters tween to new totals; receipt translates 24px upward with spring damping 24; checkmark draws over 400ms."]
+    ],
+    "vectors": [
+      ["Avatar nodes", "Source and destination identities", "Two 64px circles, 1.5px stroke, gradient fill at 8% opacity, dashed orbital ring at 40% opacity"],
+      ["Payment rail", "The transfer path", "Quadratic bezier, 3px stroke, linecap round, dash pattern 6 8 for the idle state"],
+      ["Packet", "Value in motion", "12px radial-gradient orb plus a 40px blurred halo filter"],
+      ["Compliance checkpoint", "Risk gate on the route", "Shield path with 1.5px stroke, sits at bezier midpoint, pulses on clearance"],
+      ["Receipt card", "Settlement proof", "Rounded rect 320x180, glass fill, hairline border, mono reference line"]
+    ],
+    "physics": [
+      "Route draw uses stroke-dashoffset tied to a normalized 0.18 -> 0.62 slice of the master timeline.",
+      "Packet position derives from the same progress value, so scrubbing backward rewinds it exactly.",
+      "Avatar settle uses a damped spring (stiffness 220, damping 24) instead of a CSS transition.",
+      "Caption crossfade is 200ms opacity with a 20ms upward translate, easing cubic-bezier(0.65,0,0.35,1)."
+    ],
+    "data": "const TRANSFER = { sender: 'Maya R.', recipient: '@arjun', amount: 250.00, currency: 'USD', fee: 0.00, rail: 'INSTANT', latency: '3.2s', ref: 'TXN-8F42QK' };",
+    "notes": "This skill is the reference implementation for the flagship demo. Keep the controls bar identical to demos/stripe-flow-explainer.html so both feel like one product."
+  },
+  {
+    "id": "02",
+    "slug": "card-swipe-auth",
+    "name": "Card Swipe Authorization",
+    "cat": "A",
+    "hook": "An isometric tap to a POS terminal, then an issuer decision in 900 milliseconds.",
+    "objective": "Visualize the four-party card authorization model: cardholder, merchant terminal, acquirer, and issuer rules engine, ending in an approval with an auth code.",
+    "dur": 18000,
+    "accent": "#4F46E5",
+    "accent2": "#10B981",
+    "scenes": [
+      ["Tap the Terminal", "0.0s - 4.0s", "The card hovers into the reader and the terminal wakes up.", "Isometric card at rotate(-18deg, skewY(8deg)), POS body, NFC glyph, $42.80 order chip.", "Card translates 90px along a diagonal with a 600ms cubic-bezier(0.16,1,0.3,1); on contact the terminal LED turns indigo and a ripple expands."],
+      ["Authorization Request", "4.0s - 8.5s", "The terminal packages the cryptogram and routes it to the issuer.", "Request envelope traveling a 3-hop rail: terminal -> acquirer -> issuer.", "Hop markers light sequentially at 25%, 55% and 85% of the scene; the envelope leaves a 320ms fading trail."],
+      ["Issuer Rules Engine", "8.5s - 13.5s", "Three checks run in parallel: cryptogram, velocity, available balance.", "Vertical check stack with 28px status dots and mono labels.", "Each row resolves on a staggered 260ms delay; a dot fills emerald and the label swaps from PENDING to PASS."],
+      ["Approved", "13.5s - 18.0s", "The checkmark draws, the auth code prints and the card lifts away.", "Stroke-drawn checkmark, printed receipt sliding out of the POS, auth code in mono.", "Checkmark path traces over 420ms; receipt slides 64px on a spring; approval flash decays over 500ms."]
+    ],
+    "vectors": [
+      ["Isometric card", "The payment instrument", "Rounded rect 220x140 with a gradient face, a chip rect, and two hairline stripes"],
+      ["POS terminal", "Merchant acceptance point", "Rounded rect 180x220, 12px corner radius, screen with a 3-row mono log"],
+      ["Routing rail", "Four-party authorization path", "Polyline with rounded joins plus three circular hop nodes"],
+      ["Rules engine stack", "Issuer decisioning", "Three 300x44 pills with a leading status dot and mono value column"],
+      ["Success checkmark", "Approval signal", "Two-segment path totalling about 120 units, stroke-dasharray animated to zero"]
+    ],
+    "physics": [
+      "Contact ripple expands 0 -> 2.4x scale while opacity falls 0.5 -> 0 over 700ms.",
+      "Hop lighting is driven by progress bands, never by chained setTimeout calls.",
+      "The rules stack uses an 80ms stagger per row and cubic-bezier(0.65,0,0.35,1).",
+      "Approval flash is a radial gradient whose opacity decays linearly against the last 3 seconds only."
+    ],
+    "data": "const AUTH = { merchant: 'Kettle & Co.', amount: 42.80, currency: 'USD', entry: 'CONTACTLESS', acquirer: 'NORTH_ACQ', issuer: 'MERIDIAN_BANK', authCode: 'A7K2Q9', latencyMs: 920 };",
+    "notes": "Keep the isometric projection consistent across all scenes. Use one SVG viewBox and transform the whole group rather than re-projecting individual shapes."
+  },
+  {
+    "id": "03",
+    "slug": "split-bill",
+    "name": "Split Bill",
+    "cat": "A",
+    "hook": "One $186.40 dinner invoice fanning out into four shares with live percentage counters.",
+    "objective": "Demonstrate bill splitting with unequal shares, tip apportioning, rounding guards, and per-party settlement states.",
+    "dur": 16000,
+    "accent": "#10B981",
+    "accent2": "#4F46E5",
+    "scenes": [
+      ["Single Invoice", "0.0s - 3.5s", "One invoice sits in the center: $186.40 with a 20% tip already applied.", "Centered invoice card, line items, total in JetBrains Mono at 40px.", "Card scales 0.96 -> 1 with a 480ms spring; total counts up from 0 with tabular-nums so digits never shift."],
+      ["Fan Out", "3.5s - 8.5s", "The invoice splits into four party nodes along radial spokes.", "Four avatar nodes arranged on a 220px radius, connector spokes, share chips.", "Spokes draw on a 60ms stagger; each node pops with scale 0.8 -> 1 and a 120ms overlap."],
+      ["Share Math", "8.5s - 13.0s", "Each party shows its percentage and exact amount, with the rounding remainder assigned.", "Percentage counters, amount labels, a remainder line highlighting the $0.02 absorber.", "Percent values tween in lockstep so they always sum to 100.0; remainder chip pulses once when it resolves."],
+      ["Settled", "13.0s - 16.0s", "Three parties settle instantly; one is pending and shows a nudge button.", "Status chips (SETTLED / PENDING), a progress ring at 75%.", "Settled chips swap to emerald with a 200ms crossfade; ring arc animates 0 -> 75% with a rounded cap."]
+    ],
+    "vectors": [
+      ["Invoice card", "Pre-split state", "Rounded rect 340x200, glass surface, three hairline separators"],
+      ["Radial spokes", "Split topology", "Four straight lines from center to node ring, 1.5px, 30% opacity"],
+      ["Party nodes", "Participants", "48px circles with initials, plus a 72px dashed halo when pending"],
+      ["Percentage counters", "Share math", "JetBrains Mono 22px, tabular-nums, suffix at 60% opacity"],
+      ["Progress ring", "Settlement status", "Circle with stroke-dasharray 2*pi*r, rotated -90deg"]
+    ],
+    "physics": [
+      "All four amount counters are driven from a single scene progress value so they never drift apart.",
+      "Fan-out uses transform-origin at the invoice center with a 40ms per-spoke delay.",
+      "Rounding remainder reveals with a 1.08 scale pulse then settles to 1.0 over 300ms.",
+      "Pending halo rotates at 12deg per second with a linear timing function because it is ambient motion."
+    ],
+    "data": "const BILL = { merchant: 'Osteria Nove', subtotal: 155.33, tipPct: 20, total: 186.40, parties: [{ name: 'Maya', pct: 25, due: 46.60 }, { name: 'Arjun', pct: 25, due: 46.60 }, { name: 'Lena', pct: 30, due: 55.92 }, { name: 'Tom', pct: 20, due: 37.28 }], remainderAbsorber: 'Tom', remainder: 0.02 };",
+    "notes": "Always render the remainder absorber explicitly. Finance reviewers look for it, and hiding rounding is the most common credibility failure in split-payment visuals."
+  },
+  {
+    "id": "04",
+    "slug": "qr-scan-pay",
+    "name": "QR Scan and Pay",
+    "cat": "A",
+    "hook": "A scanner frame locks onto a QR code, resolves it, and morphs into a digital receipt.",
+    "objective": "Show merchant QR acceptance: scan, decode, amount confirmation, authorization, and receipt generation from a single morphing container.",
+    "dur": 15000,
+    "accent": "#06B6D4",
+    "accent2": "#10B981",
+    "scenes": [
+      ["Scanner Online", "0.0s - 3.0s", "The viewfinder opens and four corner brackets snap to a QR code.", "Phone frame, dimmed camera plate, four L-shaped brackets, laser sweep line.", "Brackets translate inward 16px on an 80ms stagger; the sweep line loops vertically at 1.2s per pass with an ease-in-out."],
+      ["Decode", "3.0s - 7.5s", "QR modules resolve into a merchant identity and an amount.", "25x25 module grid, resolving into a merchant chip and a $18.50 amount row.", "Modules fade out in a diagonal wave from 0 -> 1.2s; merchant text types in mono at 24ms per character."],
+      ["Confirm and Authorize", "7.5s - 11.5s", "The user confirms and the payment clears in one pass.", "Confirm sheet, biometric glyph, three-step authorization ticks.", "Sheet translates upward 120px on a spring; ticks land at 120ms intervals; button label swaps CONFIRM -> PAID."],
+      ["Receipt Morph", "11.5s - 15.0s", "The scanner frame morphs into a receipt with a scannable reference.", "Same rounded rect morphing from camera aspect to receipt aspect, itemized lines.", "Animate width, height and corner radius together over 600ms; module grid cross-fades to receipt text."]
+    ],
+    "vectors": [
+      ["Viewfinder brackets", "Scan target", "Four L-paths with 3px stroke and rounded caps at the four corners"],
+      ["Laser sweep", "Scanning motion", "Gradient-filled rect 2px tall with a soft blur, clipped to the viewfinder"],
+      ["QR matrix", "Encoded payload", "Deterministic 25x25 rect grid generated from a seeded PRNG, not a static image"],
+      ["Receipt", "Post-payment artifact", "Rounded rect with a mono line stack and a reference hash"],
+      ["Morph container", "Continuity device", "One SVG rect whose x, y, width, height and rx are all interpolated"]
+    ],
+    "physics": [
+      "Generate QR modules once on load and toggle opacity per module; never rewrite the DOM during playback.",
+      "The morph interpolates geometry with cubic-bezier(0.16,1,0.3,1) to keep the shape legible mid-flight.",
+      "Laser sweep is ambient and uses linear timing, gated by scene progress so it stops when paused.",
+      "Success state uses emerald plus a 240ms halo, not a colour flash, to avoid looking like an error."
+    ],
+    "data": "const QR_PAY = { merchant: 'Blue Tokai Coffee', amount: 18.50, currency: 'INR', method: 'UPI_QR', vpa: 'bluetokai@okhdfcbank', ref: 'QR-4M8X2P', settledIn: '1.8s' };",
+    "notes": "Use a seeded PRNG for the QR pattern so every render, replay and screenshot produces the identical matrix."
+  },
+  {
+    "id": "05",
+    "slug": "cross-border-fx",
+    "name": "Cross-Border FX Transfer",
+    "cat": "A",
+    "hook": "A USD to INR corridor lit across a globe with a live mid-market rate ticker.",
+    "objective": "Explain the cost stack of an international transfer: mid-market rate, spread, explicit fee, and the exact amount the recipient receives.",
+    "dur": 18000,
+    "accent": "#06B6D4",
+    "accent2": "#4F46E5",
+    "scenes": [
+      ["Corridor Opens", "0.0s - 4.0s", "New York and Bengaluru light up and a great-circle arc connects them.", "Orthographic globe, two pulsing city beacons, one arc with a gradient stroke.", "Arc draws over 1.6s while both beacons run a 2-cycle pulse; the globe rotates 8 degrees for parallax."],
+      ["Live Rate", "4.0s - 9.0s", "The mid-market ticker ticks up while the user watches.", "Rate display 1 USD = 83.2410 INR in mono, micro sparkline underneath.", "Digit rolls use per-character translateY; sparkline redraws from a 40-point seeded series at 12fps."],
+      ["Cost Stack", "9.0s - 14.0s", "Spread and fee are peeled off, leaving the exact landing amount.", "Horizontal stacked bar: principal, spread, fee; three legend rows.", "Bar segments grow left to right at 120ms offsets; legend values count against the same scene progress."],
+      ["Credit Lands", "14.0s - 18.0s", "The rupees land in the recipient account with a settlement stamp.", "Recipient card, INR counter, 'credited in 11 minutes' stamp.", "Counter eases to the final amount; stamp scales 1.4 -> 1.0 with a 220ms spring and a slight rotation."]
+    ],
+    "vectors": [
+      ["Globe", "Geography", "Circle plus 6 arcs for latitude/longitude lines at 18% opacity"],
+      ["City beacons", "Endpoints", "Two concentric circles with an expanding halo animation"],
+      ["Corridor arc", "Money path", "Cubic bezier sampled to 60 points, gradient stroke from indigo to cyan"],
+      ["Rate sparkline", "Market motion", "40-point polyline generated by a seeded random walk, no smoothing filter"],
+      ["Cost stack bar", "Fee transparency", "Three adjacent rounded rects with a shared 8px height and 2px gaps"]
+    ],
+    "physics": [
+      "The rate sparkline updates at a capped 12fps to read as a live feed without looking noisy at 60fps.",
+      "Cost segments never overlap; compute each segment width from cumulative percentages.",
+      "Globe parallax is a 2px-per-degree translate capped at 16px total.",
+      "The stamp uses overshoot plus rotation(-6deg) to feel physically pressed."
+    ],
+    "data": "const FX = { sendUsd: 1000, rate: 83.241, spreadBps: 35, feeUsd: 4.99, receiveInr: 82535.74, corridor: 'USD to INR', rails: 'SWIFT gpi + local IMPS', eta: '11 min' };",
+    "notes": "Always cite the mid-market reference rate and show spread separately from the fee. Combining them is the misleading pattern regulators flag."
+  },
+  {
+    "id": "06",
+    "slug": "escrow-release",
+    "name": "Escrow Release",
+    "cat": "A",
+    "hook": "A vault that only opens when both parties turn their keys green.",
+    "objective": "Show conditional escrow: funds locked, delivery proof from the buyer, acceptance from the seller, then simultaneous release.",
+    "dur": 17000,
+    "accent": "#4F46E5",
+    "accent2": "#10B981",
+    "scenes": [
+      ["Funds Locked", "0.0s - 4.0s", "The vault seals with a $12,500 balance inside and two unlit condition keys.", "Vault door SVG with radial bolts, a mono balance plate, two key slots at 30% opacity.", "Door bolts rotate 0 -> 45deg on an 80ms stagger; a lock pulse travels around the door rim once per 2s."],
+      ["Condition One", "4.0s - 8.5s", "The buyer uploads delivery proof and the first key turns emerald.", "Document glyph flying into the left key slot, checkbox resolving.", "Document translates 160px on a bezier with a 30% opacity trail; key rotates 90deg with a 180ms spring."],
+      ["Condition Two", "8.5s - 13.0s", "The seller confirms acceptance and the second key turns green.", "Mirrored interaction on the right side with an acceptance signature stroke.", "Signature path draws over 520ms; the second key mirrors the first with identical easing for symmetry."],
+      ["Release", "13.0s - 17.0s", "Both keys align, the door opens and funds split: 95% seller, 5% fee.", "Vault opening, two fund streams, settlement ledger row.", "Door rotates open on the y-axis over 700ms; streams travel on mirrored arcs; ledger row slides in last."]
+    ],
+    "vectors": [
+      ["Vault", "Custody of funds", "Outer circle 120px radius, inner door with 8 bolts around a 60px hub"],
+      ["Condition keys", "Dual authorization", "Two key silhouettes built from a circle plus a notched rect, mirrored across center"],
+      ["Document glyph", "Delivery proof", "Rect with a folded corner and three text lines"],
+      ["Fund streams", "Release distribution", "Two tapered paths with gradient fill from indigo to emerald"],
+      ["Ledger row", "Audit trail", "Table row 520x40 with four mono columns"]
+    ],
+    "physics": [
+      "Both conditions must be state-driven booleans derived from progress, not from click state.",
+      "Key rotation eases with a springy overshoot of 6 degrees before settling.",
+      "The door uses a CSS 3D transform on an SVG group with perspective 800px.",
+      "Only the final release stage may use emerald; earlier stages stay indigo so green still means go."
+    ],
+    "data": "const ESCROW = { dealId: 'ESC-2291', amount: 12500, currency: 'USD', buyer: 'Northwind Labs', seller: 'Sable Studio', milestones: ['Delivered', 'Accepted'], platformFeePct: 5, releaseEta: 'Instant' };",
+    "notes": "Never animate release before both condition checks complete, even when scrubbing quickly. Clamp stage transitions to progress thresholds."
+  },
+  {
+    "id": "07",
+    "slug": "subscription-recurring",
+    "name": "Subscription Recurring Billing",
+    "cat": "A",
+    "hook": "A circular calendar that bills, retries and recovers without ever leaving the loop.",
+    "objective": "Explain the subscription billing cycle including the invoice trigger, smart retry ladder on a soft decline, and a voluntary cancellation path.",
+    "dur": 18000,
+    "accent": "#4F46E5",
+    "accent2": "#F43F5E",
+    "scenes": [
+      ["Cycle Begins", "0.0s - 4.0s", "A 12-month ring draws and the current month marker slides into place.", "Concentric month ring, 12 tick marks, a cardinal marker, $49 per month chip.", "Ring draws with stroke-dashoffset over 1.4s; marker slides to the 4th tick using a spring."],
+      ["Auto Charge", "4.0s - 8.5s", "The card is charged and a micro-deduction ripple fires each cycle.", "Card chip, charge pulses radiating inward, balance ticking down.", "Each monthly pulse uses a 300ms scale + opacity pair, staggered by 240ms across three simulated cycles."],
+      ["Soft Decline", "8.5s - 13.5s", "A decline hits, then a retry ladder runs D+1, D+3, D+5.", "Rose status chip, three retry nodes on a horizontal ladder with day labels.", "Ladder nodes lock in sequence with a 200ms fade; the active node pulses in rose until it resolves."],
+      ["Recovered or Cancelled", "13.5s - 18.0s", "Retry succeeds and the loop resumes, with the cancel path shown dimmed.", "Emerald recovery chip, loop re-entering, dimmed cancel branch with a 40% opacity label.", "Recovery chip swaps label with a crossfade; the loop arrow re-draws once to signal continuity."]
+    ],
+    "vectors": [
+      ["Month ring", "Billing calendar", "Circle r=140 with 12 radial tick lines and one cardinal marker"],
+      ["Charge pulses", "Micro-deductions", "Three concentric circles with staggered scale and opacity animations"],
+      ["Retry ladder", "Dunning logic", "Polyline with three 28px nodes and mono day labels D+1, D+3, D+5"],
+      ["Card chip", "Payment method", "Rounded rect 160x100 with a chip rect and truncated PAN"],
+      ["Cancel branch", "Churn path", "Dashed path branching downward at 40% opacity"]
+    ],
+    "physics": [
+      "Retry nodes resolve on progress thresholds, not timers, so a scrub to 90% shows the correct ladder state.",
+      "Loss and recovery colours stay separate: rose only for decline, emerald only for recovery.",
+      "Ambient ring rotation runs at 6deg/s and must pause with playback.",
+      "Charge ripples reverse their scale direction on retry to visually signal a second attempt."
+    ],
+    "data": "const SUBSCRIPTION = { plan: 'Pro Annual', monthly: 49.00, currency: 'USD', cycle: 'monthly', retryLadder: [1, 3, 5], declineCode: 'soft_decline', recoveryRate: 0.72 };",
+    "notes": "Dunning is the most under-visualized part of billing. Give the retry ladder a full third of the runtime."
+  },
+  {
+    "id": "08",
+    "slug": "refund-reversal",
+    "name": "Refund Reversal",
+    "cat": "A",
+    "hook": "A transaction that runs backward, then settles forward again as credit.",
+    "objective": "Show a refund as a reversal of the original authorization: ledger entries flipping sign, the path rewinding, and the customer balance restoring.",
+    "dur": 15000,
+    "accent": "#F43F5E",
+    "accent2": "#10B981",
+    "scenes": [
+      ["Original Charge", "0.0s - 3.5s", "The capture path completes and the ledger shows a debit of $89.00.", "Horizontal ledger with a signed amount, status chip CAPTURED, forward arrow path.", "Path draws left to right; the debit row enters with a 16px X translate and settles on a spring."],
+      ["Reversal Triggered", "3.5s - 7.5s", "The merchant issues a refund and the timeline rewinds visibly.", "The same path redrawn right to left, amount sign flipping from -89.00 to +89.00.", "Dashoffset animates in reverse; the amount text crosses through with a 180ms scaleX flip before showing the plus sign."],
+      ["Rail Return", "7.5s - 11.5s", "Funds travel back along the issuing rail to the original card.", "Reversed packet on the mirrored arc, three intermediary nodes lighting in reverse order.", "Packet uses getPointAtLength on the same path with inverted progress; nodes light at 75%, 45%, 15%."],
+      ["Balance Restored", "11.5s - 15.0s", "The cardholder balance returns to its pre-purchase value and the ledger reconciles.", "Balance counter, ledger rows marked REFUNDED, reconciliation checkmark.", "Counter counts upward from the debited value; both ledger rows emit a single emerald underline sweep."]
+    ],
+    "vectors": [
+      ["Ledger rows", "Accounting truth", "Two stacked rows with mono debit/credit columns and status chips"],
+      ["Reversal path", "Refund routing", "Single polyline reused for both directions, 3px stroke"],
+      ["Card face", "Destination instrument", "Rounded rect with masked PAN and a subtle metallic gradient"],
+      ["Reconciliation check", "Closure state", "Checkmark path plus a 560x2 underline gradient sweep"],
+      ["Sign flip glyph", "Direction change", "Text node with transform-origin center and scaleX animated through zero"]
+    ],
+    "physics": [
+      "Reversal must reuse the exact same path geometry as the original charge to read as a true rewind.",
+      "The sign flip passes through scaleX 0 at the midpoint and never displays both signs at once.",
+      "Rose is used for the original debit, emerald for the returned credit; avoid mixing them on one element.",
+      "The end state is a quiet one: after reconciliation, hold still for the final 800ms rather than looping."
+    ],
+    "data": "const REFUND = { orderId: 'ORD-7719', merchant: 'Fern Supply', amount: 89.00, currency: 'USD', originalAuth: 'CAPTURED', refundStatus: 'REFUNDED', railDays: '3-5 business', reason: 'Item not received' };",
+    "notes": "Reversal animations are the clearest test of a progress-driven engine. If scrubbing backward looks broken, this skill will expose it."
+  },
+  {
+    "id": "09",
+    "slug": "nfc-contactless",
+    "name": "NFC Contactless Tap",
+    "cat": "A",
+    "hook": "Concentric radio waves bridging a phone and a reader in 400 milliseconds.",
+    "objective": "Visualize near-field communication: field generation, inductive coupling at 13.56 MHz, tokenized data exchange, and instant approval.",
+    "dur": 14000,
+    "accent": "#06B6D4",
+    "accent2": "#10B981",
+    "scenes": [
+      ["Field On", "0.0s - 3.5s", "The phone wakes and emits a 4cm near field.", "Phone silhouette, three concentric arc groups expanding from the antenna region.", "Each wave group expands 0 -> 1.6x scale while opacity falls 0.6 -> 0 over 900ms, staggered 160ms."],
+      ["Proximity", "3.5s - 7.0s", "The reader enters the field and the two devices couple.", "Reader rectangle sliding in, matching wave arcs, a 4cm distance indicator.", "Reader translates 120px over 700ms; the distance ruler collapses from 4cm to 0 with a mono label ticking down."],
+      ["Token Exchange", "7.0s - 11.0s", "A device token, never the PAN, crosses the gap.", "Small packet labeled TOKEN-9F2A traversing the gap with a shield glyph.", "Packet travels 60px in 300ms; shield pulses once on arrival; a mono caption confirms PAN never left the device."],
+      ["Tap Complete", "11.0s - 14.0s", "The reader beeps, the terminal shows $7.20 paid and the waves retract.", "Green reader LED, amount chip, retracting wave groups.", "Waves reverse their expansion; chip lands with a 1.06 scale overshoot over 240ms."]
+    ],
+    "vectors": [
+      ["Near-field arcs", "RF energy", "Three concentric partial arcs at 0.3, 0.6 and 0.9 radii, rounded caps"],
+      ["Phone", "Initiator device", "Rounded rect 90x180 with a notch and an antenna region highlighted"],
+      ["Card reader", "Acceptor device", "Rounded rect 140x170 with a screen and a status LED circle"],
+      ["Token packet", "Secured payload", "16x16 rounded square with a mono label and a trailing gradient"],
+      ["Distance ruler", "Physical proximity", "Horizontal line with two end caps and a mono measurement label"]
+    ],
+    "physics": [
+      "Wave stagger is 160ms with 900ms life; three groups are enough, more reads as noise.",
+      "All wave animation stops precisely when playback pauses.",
+      "The distance ruler uses an ease-out curve so the final centimetres feel quick.",
+      "Keep the frequency label 13.56 MHz visible in the scene caption for technical credibility."
+    ],
+    "data": "const NFC = { device: 'iPhone 15', reader: 'Verifone P400', amount: 7.20, currency: 'EUR', frequency: '13.56 MHz', rangeCm: 4, token: 'TOKEN-9F2A', latencyMs: 400 };",
+    "notes": "Do not draw a literal PAN in this skill. The entire point is that the token crosses the gap instead."
+  },
+  {
+    "id": "10",
+    "slug": "multi-currency-wallet",
+    "name": "Multi-Currency Wallet",
+    "cat": "A",
+    "hook": "Glass cards fanning out to reveal EUR, USD, GBP and JPY balances at once.",
+    "objective": "Show a unified multi-currency wallet: stacked balances, live conversion into a base currency, and an FX sweep that consolidates idle balances.",
+    "dur": 16000,
+    "accent": "#4F46E5",
+    "accent2": "#06B6D4",
+    "scenes": [
+      ["Stacked Wallet", "0.0s - 3.5s", "Four glass cards sit perfectly stacked and then fan open.", "Four overlapping rounded rects with currency glyphs, 12px vertical offsets.", "Cards fan to rotate(-12, -4, 4, 12) with 60ms stagger on a spring; total balance chip stays fixed."],
+      ["Balances", "3.5s - 8.0s", "Each card displays its native balance and its base-currency equivalent.", "Per-card native amount plus a smaller USD equivalent line.", "Counters tween on a 500ms ease-out; equivalents crossfade 120ms after each native count finishes."],
+      ["FX Sweep", "8.0s - 12.5s", "Idle EUR and GBP balances sweep into USD to cover a payment.", "Conversion arrows arcing between cards, rate chips, a consolidated total.", "Arcs draw from each source card into the USD card at 140ms offsets; source balances decrement as the destination increments."],
+      ["One Number", "12.5s - 16.0s", "The wallet collapses back to a single consolidated balance.", "Cards restack, total counter at 44px mono, base currency chip.", "Cards return to the stacked position; the total counts from the pre-sweep value to the consolidated one."]
+    ],
+    "vectors": [
+      ["Wallet cards", "Currency containers", "Four 300x180 rounded rects with glass fills and 1px hairline borders"],
+      ["Currency glyphs", "Denomination", "Circle badge with a mono three-letter code, no flag emoji"],
+      ["FX arcs", "Conversion paths", "Quadratic beziers between card centers with arrowheads"],
+      ["Consolidated total", "Single source of truth", "Mono 44px figure with tabular-nums and a smaller currency suffix"],
+      ["Rate chips", "Conversion transparency", "Pill with rate text and a 10% opacity indigo fill"]
+    ],
+    "physics": [
+      "Fan transforms use transform-origin at the card base, not the center, so the stack looks hinged.",
+      "Balance updates are conserved: total value must not change during the sweep, only distribution.",
+      "Card depth uses a 6px shadow ladder rather than blur, which stays crisp on low-DPI screens.",
+      "Collapse uses a 400ms ease-in-out and must complete before the total counter animates."
+    ],
+    "data": "const WALLET = { base: 'USD', balances: { EUR: 1240.50, USD: 860.00, GBP: 410.20, JPY: 58000 }, rates: { 'EUR/USD': 1.087, 'GBP/USD': 1.271, 'JPY/USD': 0.0067 }, consolidateFor: 'Vendor payout' };",
+    "notes": "Currency glyphs beat flag emoji. Emoji rendering differs across platforms and breaks visual consistency in a premium fintech UI."
+  },
+  {
+    "id": "11",
+    "slug": "ach-wire-routing",
+    "name": "ACH, Wire and Real-Time Routing",
+    "cat": "B",
+    "hook": "Three rails, three clocks, one clearing house.",
+    "objective": "Compare batch ACH, same-day ACH and real-time rails on cost, cutoff time and settlement latency using a multi-hop clearing house diagram.",
+    "dur": 19000,
+    "accent": "#4F46E5",
+    "accent2": "#10B981",
+    "scenes": [
+      ["Origination", "0.0s - 4.0s", "Three payment files leave the originator for the clearing house.", "Originator block, three parallel rails labeled ACH, SAME-DAY, RTP, each with a clock badge.", "Rails draw simultaneously; clock badges show 1-2 days, same day and 10 seconds respectively."],
+      ["Batch Queue", "4.0s - 9.5s", "ACH packets queue into a batch envelope while RTP packets go straight through.", "Batch envelope filling with 40 small packet ticks, RTP packets bypassing the queue.", "Tick fill is a seeded 40-step loop at 60ms; the RTP lane visibly overtakes with a cyan streak."],
+      ["Clearing and Settlement", "9.5s - 14.5s", "The clearing house nets positions and settles each rail at its own cadence.", "Netting table, three settlement timestamps, receiver bank block.", "Rows land with 90ms stagger; timestamps count up from zero to their final values."],
+      ["Cost and Cutoff", "14.5s - 19.0s", "A compact comparison shows fee and cutoff for each rail.", "Three-column comparison card with mono figures and a recommended-rail highlight.", "Columns reveal left to right; the recommended cell gets a 2px indigo outline that draws on."]
+    ],
+    "vectors": [
+      ["Originator block", "Initiating institution", "320x90 rounded rect with a mono institution label and three output ports"],
+      ["Rail lanes", "Payment systems", "Three horizontal lanes with 2px strokes and dashed center guides"],
+      ["Batch envelope", "ACH batching", "Rounded rect with a 40-cell grid and a fill-progress clip path"],
+      ["Netting table", "Clearing logic", "Four-column grid with mono values, right aligned"],
+      ["Clock badges", "Latency", "Circle with a clock face and a mono duration label beneath"]
+    ],
+    "physics": [
+      "The RTP lane must visually finish before the ACH lane shows even 20% progress; that asymmetry is the entire lesson.",
+      "Batch fill is a clipped mask, not 40 individually animated nodes.",
+      "Timestamps tween as integers so they never show fractional milliseconds.",
+      "Use the same easing family across all three lanes so the comparison stays fair."
+    ],
+    "data": "const RAILS = [{ name: 'ACH Standard', fee: 0.29, eta: '1-2 business days', cutoff: '14:45 ET' }, { name: 'Same-Day ACH', fee: 0.55, eta: 'Same day', cutoff: '12:45 ET' }, { name: 'RTP / FedNow', fee: 0.045, eta: 'Under 10 seconds', cutoff: '24/7' }];",
+    "notes": "Fees vary by provider. Label the figures as illustrative in the caption so the demo never reads as a rate sheet."
+  },
+  {
+    "id": "12",
+    "slug": "immutable-ledger",
+    "name": "Immutable Ledger",
+    "cat": "B",
+    "hook": "Cryptographic blocks locking in sequence while hash strings type themselves out.",
+    "objective": "Show append-only ledger mechanics: hashing transaction batches, chaining each block to its predecessor, and detecting tampering.",
+    "dur": 18000,
+    "accent": "#06B6D4",
+    "accent2": "#4F46E5",
+    "scenes": [
+      ["Transaction Pool", "0.0s - 4.0s", "Four pending transactions settle into a mempool line.", "Four transaction chips with mono IDs and amounts, a pending queue rail.", "Chips drop into the pool with a 70ms stagger and a 6px settle bounce."],
+      ["Block Sealed", "4.0s - 9.0s", "The pool batches, a merkle root is computed and a hash types out.", "Block card with nonce, merkle root, timestamp and a typing hash line.", "Hash types at 22ms per hex character; the block border draws from 0 -> full perimeter over 800ms."],
+      ["Chain Link", "9.0s - 14.0s", "Each block references the previous hash and the chain extends.", "Three blocks linked by prev-hash connector rails.", "Connector draws between blocks on a 200ms stagger; each new block inherits a 1-block vertical offset."],
+      ["Tamper Detected", "14.0s - 18.0s", "One block is altered and every downstream link invalidates in red.", "Altered block with a diff highlight, downstream hashes flashing rose, invalid banner.", "The tamper sweep travels right at 1 block per 300ms; affected blocks shift 2px and desaturate, then the banner slides in."]
+    ],
+    "vectors": [
+      ["Transaction chips", "Ledger inputs", "120x36 pills with mono ID and right-aligned amount"],
+      ["Block card", "Ledger unit", "260x200 rounded rect with a 3-row mono field stack"],
+      ["Hash text", "Integrity proof", "JetBrains Mono 12px, 0.2em tracking, truncated to 16 hex characters"],
+      ["Chain connectors", "Linked structure", "1.5px lines with a mid-arrow marker between block edges"],
+      ["Tamper highlight", "Invalidation", "Rose overlay rect with a 1px inset border and a diagonal hatch pattern"]
+    ],
+    "physics": [
+      "Typed hashes must be deterministic per block index so replay produces identical strings.",
+      "Only one hash types at a time; concurrent typing destroys legibility.",
+      "Tamper propagation is a rightward sweep with a fixed 300ms per block, never a global flash.",
+      "After invalidation, hold the state for the final 600ms instead of looping, so the consequence lands."
+    ],
+    "data": "const LEDGER = { blockHeight: 841_207, txCount: 4, prevHash: '0000a3f1c9d2', merkleRoot: '7e4b90cc12af', nonce: 18423, algorithm: 'SHA-256', finality: 'probabilistic' };",
+    "notes": "Say 'append-only with tamper evidence' rather than 'unhackable'. Precision protects the demo from technical criticism."
+  },
+  {
+    "id": "13",
+    "slug": "api-webhook-sync",
+    "name": "API and Webhook Sync",
+    "cat": "B",
+    "hook": "A JSON payload leaving a code pane and landing as a live mobile notification.",
+    "objective": "Explain event-driven integration: an API request, a signed webhook delivery, idempotency handling, and the resulting UI update.",
+    "dur": 17000,
+    "accent": "#4F46E5",
+    "accent2": "#06B6D4",
+    "scenes": [
+      ["API Call", "0.0s - 4.0s", "A POST request builds in the code pane with syntax highlighting.", "Code card with line numbers, method badge POST, endpoint, JSON body.", "Lines reveal one at a time at 90ms; the POST badge pulses once when the request fires."],
+      ["Signed Webhook", "4.0s - 9.0s", "The event serializes and travels to the merchant endpoint with an HMAC signature.", "Payload orb labeled payment_intent.succeeded, a signature chip, a delivery rail.", "Orb travels the rail over 900ms; a 200 response chip lands with a 1.05 scale overshoot."],
+      ["Idempotent Handling", "9.0s - 13.0s", "A duplicate delivery arrives and is safely ignored via the idempotency key.", "Two identical payloads, one marked DUPLICATE, a dedupe shield.", "Second payload arrives with 60% opacity and is stamped DUPLICATE over 180ms."],
+      ["UI Updates", "13.0s - 17.0s", "The mobile screen flips from Pending to Paid with the exact webhook amount.", "Phone frame, status pill transition, amount row, timestamp.", "Pill crossfades amber to emerald over 200ms; the amount row does a single 4px rise."]
+    ],
+    "vectors": [
+      ["Code pane", "Developer surface", "560x300 rounded rect with a 24px gutter strip and mono 12px lines"],
+      ["Payload orb", "Event object", "Gradient circle 28px with an outer 60px blurred glow"],
+      ["Delivery rail", "Transport", "Dashed horizontal layer with three waypoint dots"],
+      ["Dedupe shield", "Idempotency", "Shield path 36px tall with a check glyph inside"],
+      ["Phone frame", "End consumer surface", "Rounded rect 260x520 with a 24px screen radius"]
+    ],
+    "physics": [
+      "JSON lines reveal on a fixed 90ms cadence and never reflow the pane height mid-animation.",
+      "The duplicate payload must be visibly dimmer but identical in content, so dedupe reads correctly.",
+      "Webhook latency label ticks from 0ms to 142ms during transit.",
+      "Prefer mono for all identifiers, keys and amounts; sans for commentary labels."
+    ],
+    "data": "const WEBHOOK = { event: 'payment_intent.succeeded', id: 'evt_1Qx8Zk2e', idempotencyKey: 'idem_7c31ab', amount: 49.00, currency: 'USD', deliveredIn: '142ms', signature: 't=1731,v1=8f9c...' };",
+    "notes": "Show the idempotency key explicitly. It is the single most useful detail for engineers evaluating the demo."
+  },
+  {
+    "id": "14",
+    "slug": "liquidity-pool",
+    "name": "Liquidity Pool Balancing",
+    "cat": "B",
+    "hook": "Two reservoirs finding level through a living SVG wave.",
+    "objective": "Show treasury liquidity management: a pool with two reservoirs, a transfer gate, and rebalancing when coverage thresholds are breached.",
+    "dur": 17000,
+    "accent": "#06B6D4",
+    "accent2": "#4F46E5",
+    "scenes": [
+      ["Two Reservoirs", "0.0s - 4.0s", "Two tanks sit at different fill levels with a closed gate between them.", "Two rounded tank outlines with animated wave fills at 78% and 34%, plus a gate valve.", "Waves use two offset sine paths per tank with a 7s ambient period; fill heights ease in over 1.2s."],
+      ["Coverage Alert", "4.0s - 8.5s", "Reservoir B dips below its 30% coverage floor and alerts.", "Threshold line, amber warning badge, a mono coverage percentage.", "Threshold line dashes on; badge scales in with a 240ms spring; number ticks down to 28.4%."],
+      ["Gate Opens", "8.5s - 13.5s", "Funds flow from A to B and both waves settle toward parity.", "Gate valve rotating open, particle flow, both wave heights converging.", "Valve rotates 90deg over 400ms; particles flow at 18 per second; A falls and B rises with mirrored easing."],
+      ["Balanced", "13.5s - 17.0s", "Both tanks hold near the 52/48 target and the alert clears.", "Target bands, emerald status chip, equilibrium caption.", "Alert badge crossfades away; target bands draw as dashed guides; hold a calm 800ms tail."]
+    ],
+    "vectors": [
+      ["Tank outlines", "Reservoir boundary", "Rounded rect 200x260 with an open top and a 2px stroke"],
+      ["Wave fill", "Liquid volume", "Two sine paths offset by 40px, closed to the tank base and clipped to the tank shape"],
+      ["Gate valve", "Transfer control", "Circle with a 12px handle rect and two pipe stubs"],
+      ["Threshold line", "Coverage floor", "Dashed horizontal line with a mono percentage pin at the right end"],
+      ["Particle flow", "Capital movement", "12 small circles on a scroller that resets seamlessly at the gate exit"]
+    ],
+    "physics": [
+      "Wave phase advances with elapsed animation time, so paused playback freezes the surface exactly where it was.",
+      "Volume is conserved: what A loses, B gains, in the same frame.",
+      "Use a clip-path on the tank so the wave never escapes the outline.",
+      "Alert clearance should be understated. A slow crossfade reads more trustworthy than a celebration."
+    ],
+    "data": "const POOL = { reservoirA: { name: 'Operating', balance: 4_820_000, coverage: 0.78 }, reservoirB: { name: 'Payroll', balance: 1_140_000, coverage: 0.284 }, floor: 0.30, target: { A: 0.52, B: 0.48 }, moved: 620_000 };",
+    "notes": "Use one currency and unit throughout. Mixing dollars and percentages in the same counter column destroys scannability."
+  },
+  {
+    "id": "15",
+    "slug": "smart-contract-exec",
+    "name": "Smart Contract Execution",
+    "cat": "B",
+    "hook": "IF and THEN gates lighting up as a payload walks the conditional path.",
+    "objective": "Visualize deterministic contract logic: condition evaluation, branch selection, state mutation and an emitted event.",
+    "dur": 17000,
+    "accent": "#4F46E5",
+    "accent2": "#10B981",
+    "scenes": [
+      ["Invocation", "0.0s - 3.5s", "A function call enters the contract boundary with typed arguments.", "Contract outline, function signature in mono, three argument chips.", "The call packet enters from the left; the contract border draws once around the full perimeter."],
+      ["Conditional Gates", "3.5s - 9.0s", "Two IF gates evaluate and one branch is chosen.", "Diamond gate shapes labeled IF, true and false output rails, a boolean chip.", "True path turns emerald and stays lit; the false path dims to 30% and stops animating entirely."],
+      ["State Mutation", "9.0s - 13.5s", "The contract writes new state and updates the ledger entry.", "State variable row flipping from PENDING to SETTLED, storage slot glyph.", "Row values crossfade with an 80ms overlap; storage glyph fills 0 -> 100% vertically."],
+      ["Event Emitted", "13.5s - 17.0s", "An event log entry is appended and confirmed by the network.", "Event log card, three confirmation dots, finality stamp.", "Dots light at 200ms intervals; the stamp scales in with a 180ms spring and holds."]
+    ],
+    "vectors": [
+      ["Contract boundary", "Execution scope", "Rounded rect 420x300 with a 1.5px dashed stroke"],
+      ["Diamond gates", "Conditional logic", "Rotated squares with a centered IF label and two output ports"],
+      ["Branch rails", "Control flow", "Orthogonal polylines with rounded 8px joints"],
+      ["State rows", "Storage mutation", "300x40 rows with key on the left in mono and value right-aligned"],
+      ["Event log", "Observability", "Card with a mono event name, indexed args and a block number"]
+    ],
+    "physics": [
+      "Only one branch may animate at a time; dimming the losing branch is a hard requirement.",
+      "Gate evaluation flashes are 120ms, not 400ms. Logic should read as instant.",
+      "State change uses a value crossfade, never a slide, to avoid implying a transaction in progress.",
+      "Colour semantics are fixed: emerald true, rose false, indigo neutral path."
+    ],
+    "data": "const CONTRACT = { function: 'releaseMilestone(uint256 id)', args: { id: 2, amount: 5000, currency: 'USDC' }, condition: 'approvals >= 2', result: true, stateBefore: 'PENDING', stateAfter: 'SETTLED', event: 'MilestoneReleased(id=2)' };",
+    "notes": "Keep the branch graph at most two levels deep. Deeper logic needs a different skill and a slower duration."
+  },
+  {
+    "id": "16",
+    "slug": "automated-reconciliation",
+    "name": "Automated Reconciliation",
+    "cat": "B",
+    "hook": "Two columns of numbers snapping together with green connector lines.",
+    "objective": "Show reconciliation between internal ledger and bank statement: auto-matching, exception surfacing, and a final balanced state.",
+    "dur": 18000,
+    "accent": "#10B981",
+    "accent2": "#F43F5E",
+    "scenes": [
+      ["Two Sources", "0.0s - 4.0s", "Internal ledger and bank statement load in parallel columns.", "Two scrolling columns with mono amounts, dates and reference IDs.", "Columns populate top-down on a 40ms stagger; scroll offset syncs so rows align horizontally."],
+      ["Auto Match", "4.0s - 10.0s", "The engine matches nine of ten rows with green connector lines.", "Connector arcs between matching rows, match confidence badges at 100%.", "Arcs draw left to right in 180ms each with a 90ms stagger; matched rows gain a subtle emerald left border."],
+      ["Exception", "10.0s - 14.5s", "One row has a 2-cent difference and is routed to review.", "Amber row pair, a delta chip reading +0.02, a review queue slot.", "Non-matching pair shakes 2px horizontally once, then lifts into the exception tray over 400ms."],
+      ["Balanced", "14.5s - 18.0s", "The exception resolves and both totals agree exactly.", "Two total rows converging to the same figure, a reconciled stamp.", "Both totals count to the identical value; stamp lands with a 240ms spring and a 1px rule underline."]
+    ],
+    "vectors": [
+      ["Ledger column", "Internal records", "380x420 panel with 10 rows, mono right-aligned amounts"],
+      ["Statement column", "External records", "Mirrored panel with slightly different row ordering to imply messy source data"],
+      ["Connector arcs", "Match linkage", "Cubic beziers drawn across the gutter with a 1.5px emerald stroke"],
+      ["Delta chip", "Discrepancy", "Pill with signed value and amber fill at 12% opacity"],
+      ["Reconciled stamp", "Closure", "Rotated -6deg rounded outline with uppercase tracking 0.16em"]
+    ],
+    "physics": [
+      "Row scroll must be synchronized between columns; independent scrolling breaks the matching metaphor.",
+      "Match arcs animate only after both endpoint rows are fully visible.",
+      "The exception shake happens exactly once, 2px amplitude, 120ms total.",
+      "Final totals must be numerically identical, computed from the data array rather than hard-coded."
+    ],
+    "data": "const RECON = { ledgerTotal: 284_915.42, statementTotal: 284_915.42, rows: 10, autoMatched: 9, exceptions: [{ ref: 'INV-8841', delta: 0.02, reason: 'FX rounding' }], matchRate: '90%' };",
+    "notes": "Compute totals live from the row data. Reviewers do add the columns up, and a mismatch destroys trust instantly."
+  },
+  {
+    "id": "17",
+    "slug": "virtual-card-issuance",
+    "name": "Virtual Card Issuance",
+    "cat": "B",
+    "hook": "A card that draws itself out of strokes, then fills with metal.",
+    "objective": "Show instant virtual card issuance: provisioning request, card number generation in a secure enclave, and activation in the wallet.",
+    "dur": 16000,
+    "accent": "#4F46E5",
+    "accent2": "#06B6D4",
+    "scenes": [
+      ["Provisioning Request", "0.0s - 4.0s", "A request fires from the app to the issuer with a spend limit policy.", "Request card, policy chip reading $2,000 monthly, issuer endpoint mono line.", "Request line traces left to right in 500ms; the policy chip stamps in with a 1.08 scale overshoot."],
+      ["Wireframe Draw", "4.0s - 9.0s", "The card outline draws itself stroke by stroke.", "Card frame, chip, contactless glyph and number grid drawn via dashoffset.", "Each of five strokes draws sequentially at 260ms; the number grid reveals as masked dots in a 4x4 layout."],
+      ["Metal Fill", "9.0s - 13.0s", "Gradients flood the wireframe and the PAN suffix resolves.", "Linear gradient fill from slate to indigo with a moving specular highlight.", "Fill opacity animates 0 -> 1 over 600ms; the specular sweep crosses once at 45deg over 900ms."],
+      ["Ready to Spend", "13.0s - 16.0s", "The card lands in the wallet with a success state and expiry.", "Card in wallet stack, ACTIVE chip, last four digits and expiry.", "Card translates into the stack; ACTIVE chip crossfades from PENDING; hold the final frame."]
+    ],
+    "vectors": [
+      ["Card frame", "Instrument outline", "Rounded rect 380x240 with 18px radius and a 2px stroke"],
+      ["Chip", "EMV element", "Rounded rect 44x32 with three internal division lines"],
+      ["Contactless glyph", "Tap capability", "Four nested arcs rotated 90deg in the card's upper right"],
+      ["PAN mask", "Sensitive data", "16 dots in a 4x4 mono grid; only the last four render as digits"],
+      ["Metal gradient", "Premium fill", "Linear gradient 135deg from #1E293B through #4F46E5 to #06B6D4"]
+    ],
+    "physics": [
+      "Stroke drawing must complete before any fill animation begins; overlapping them looks like a render glitch.",
+      "Masked PAN reveals only the last four digits, and that reveal is the emotional payoff.",
+      "Specular sweep runs on a composited gradient transform, never by animating background position on a large element.",
+      "The final card sits at a 6-degree tilt for depth, matching the wallet stack angle in skill 10."
+    ],
+    "data": "const VIRTUAL_CARD = { program: 'Visa Commercial', last4: '4821', expiry: '09/29', spendLimit: 2000, period: 'monthly', status: 'ACTIVE', createdIn: '1.4s' };",
+    "notes": "Never render a full 16-digit PAN, even a fake one. Use the last four only; it is both safer and more realistic."
+  },
+  {
+    "id": "18",
+    "slug": "open-banking-oauth",
+    "name": "Open Banking OAuth",
+    "cat": "B",
+    "hook": "A three-party handshake bridge built from Bank, Aggregator and App.",
+    "objective": "Explain the OAuth consent flow in open banking: consent scope selection, redirect handshake, token exchange, and scoped data access.",
+    "dur": 18000,
+    "accent": "#4F46E5",
+    "accent2": "#10B981",
+    "scenes": [
+      ["Consent Screen", "0.0s - 4.5s", "The user reviews scopes: balances, transactions and identity.", "Consent card with three toggle rows and a scope summary footer.", "Toggles flip on at 160ms intervals; the summary line counts scopes 0 -> 3."],
+      ["Three-Party Handshake", "4.5s - 10.0s", "Bank, aggregator and app exchange a redirect and an auth code.", "Three nodes on a bridge, numbered exchange arrows 1, 2, 3.", "Arrows draw in strict numeric order at 500ms each; no arrow overlaps the next."],
+      ["Token Exchange", "10.0s - 14.0s", "The code is swapped for a short-lived access token in the back channel.", "Server-to-server dashed channel, token chip with 90-minute TTL, refresh token chip.", "Dashed channel draws with a marching-ants offset; token chip lands and the TTL ticks down from 90:00."],
+      ["Scoped Data Access", "14.0s - 18.0s", "Transactions flow into the app, limited exactly to the granted scopes.", "Data rows entering the app, a scope guard badge rejecting one out-of-scope request.", "Rows stream in over 1.2s; the blocked request bounces off the guard with a 3px rebound."]
+    ],
+    "vectors": [
+      ["Bridge", "Trust path between parties", "Three-pillar isometric bridge with 2px rails and 8 support ties"],
+      ["Party nodes", "Participants", "72px rounded squares with bank, aggregator and app glyphs"],
+      ["Exchange arrows", "Protocol steps", "Numbered arcs with arrowheads, 1.5px stroke, distinct hue per step"],
+      ["Token chip", "Credential", "Pill with a mono token preview and a TTL countdown ring"],
+      ["Scope guard", "Least privilege", "Shield gate at the app boundary with a pass and a block lane"]
+    ],
+    "physics": [
+      "Numbered arrows must animate strictly in sequence; parallel arrows misrepresent the protocol.",
+      "The token chip uses a countdown ring that decelerates visually as it approaches expiry.",
+      "Blocked requests rebound 3px and fade over 220ms, clearly different from a smooth pass.",
+      "Never show a raw token value in full, only a truncated mono preview."
+    ],
+    "data": "const OAUTH = { grant: 'authorization_code + PKCE', scopes: ['accounts.balance', 'transactions.read', 'identity.read'], tokenTtlMin: 90, refreshRotates: true, psuConsent: 'PSD2 SCA', revokedAfterDays: 90 };",
+    "notes": "Label the consent as revocable and time-bounded. That detail is what separates an open-banking demo from a data-scraping one."
+  },
+  {
+    "id": "19",
+    "slug": "micro-investing-roundup",
+    "name": "Micro-Investing Round-Up",
+    "cat": "B",
+    "hook": "A $4.60 coffee that quietly invests its $0.40 of loose change.",
+    "objective": "Show spare-change investing: purchase capture, round-up calculation, batch aggregation and a fractional share purchase.",
+    "dur": 15000,
+    "accent": "#10B981",
+    "accent2": "#4F46E5",
+    "scenes": [
+      ["Coffee Purchase", "0.0s - 3.5s", "A $4.60 charge clears and the amount settles in mono.", "Merchant chip, receipt line, $4.60 amount, card glyph.", "Receipt line draws in; the amount counts from 0 to 4.60 in 400ms with tabular-nums."],
+      ["Round-Up Math", "3.5s - 7.5s", "The engine rounds to $5.00 and isolates the $0.40 delta.", "Amount splits into $4.60 spent and $0.40 invested, a coin glyph for the remainder.", "The $0.40 chip lifts out of the total with a 12px rise and separates on a spring."],
+      ["Batch Aggregation", "7.5s - 11.0s", "Five round-ups batch into a $2.15 weekly sweep.", "Five coin chips stacking into a weekly bucket, a running total.", "Coins drop in at 120ms intervals with a 4px bounce; the bucket total counts up in step."],
+      ["Fractional Purchase", "11.0s - 15.0s", "The batch buys 0.0214 of a share and the portfolio grows.", "Portfolio line chart rising, shares counter at 4 decimals, position value.", "Chart path draws on a 900ms ease-out; the share counter increments with a 4-decimal mono format."]
+    ],
+    "vectors": [
+      ["Coin chips", "Spare change", "28px circles with a currency glyph and a 6px inner ring"],
+      ["Amount split", "Allocation", "Two stacked amount rows with a divider that splits outward"],
+      ["Weekly bucket", "Aggregation", "Open-top container 120x160 with a fill line"],
+      ["Portfolio curve", "Investment growth", "Polyline of 24 seeded points with a gradient area fill beneath"],
+      ["Share counter", "Ownership", "Mono 32px with 4 decimal places and a smaller ticker label"]
+    ],
+    "physics": [
+      "The split must be arithmetically visible: 4.60 + 0.40 must equal 5.00 in the rendered text at all times.",
+      "Coin drops use a single shared easing with staggered start times.",
+      "Chart growth is montonic; never let the seeded series dip during the purchase scene.",
+      "Share quantity uses 4 decimals, because fractional investing lives or dies on that precision."
+    ],
+    "data": "const ROUNDUP = { purchase: 4.60, rounded: 5.00, spare: 0.40, weeklyBatch: 2.15, asset: 'VTI', price: 271.40, sharesBought: 0.00792, portfolioValue: 1284.16 };",
+    "notes": "Verify the arithmetic against the displayed share count and price. Inconsistent numbers are the fastest way to lose a fintech audience."
+  },
+  {
+    "id": "20",
+    "slug": "treasury-yield-flow",
+    "name": "Treasury Yield Sweep",
+    "cat": "B",
+    "hook": "Idle cash sweeping into yield overnight and returning before payroll.",
+    "objective": "Show automated treasury sweeps: idle balance detection, money market allocation, accrual, and liquidity recall before obligations.",
+    "dur": 18000,
+    "accent": "#4F46E5",
+    "accent2": "#10B981",
+    "scenes": [
+      ["Idle Cash Detected", "0.0s - 4.0s", "A $3.2M operating balance sits idle past its buffer.", "Operating account card, a buffer threshold band, an idle amount highlight.", "Threshold band pulses amber once; the idle segment of the balance bar separates with an 8px rise."],
+      ["Sweep to Yield", "4.0s - 9.5s", "The excess sweeps into a money market fund at 5.1% APY.", "Sweep arrow into a yield bucket, APY chip, fund name in mono.", "Sweep travels over 800ms with a tapered gradient; the APY chip ticks from 0.0% to 5.1%."],
+      ["Overnight Accrual", "9.5s - 14.5s", "Interest accrues hour by hour while the clock runs at night.", "Clock arc from 22:00 to 06:00, accrual micro-bars, a running interest counter.", "Accrual bars grow at 1 bar per 160ms; interest counter increments in hundredths with tabular-nums."],
+      ["Recall for Payroll", "14.5s - 18.0s", "Funds are recalled before the payroll run and the buffer is restored.", "Recall arrow back to operating, payroll calendar chip, buffer at 100%.", "Recall arrow reverses the sweep path; buffer refills to its threshold line; a green check closes the loop."]
+    ],
+    "vectors": [
+      ["Account card", "Liquidity source", "380x160 with a balance figure and a threshold band overlay"],
+      ["Sweep arrow", "Automated transfer", "Tapered path with a gradient from indigo to emerald and a rounded head"],
+      ["Yield bucket", "Investment destination", "Cylinder form with an APY chip and a fill level"],
+      ["Clock arc", "Overnight window", "270-degree arc with hour ticks and a moving marker"],
+      ["Payroll chip", "Obligation", "Calendar glyph with a mono date and amount"]
+    ],
+    "physics": [
+      "Sweep and recall must use mirrored path geometry so the round trip reads as one system.",
+      "Interest accrual is small on purpose; show hundredths so the value is visible without exaggeration.",
+      "The clock arc advances 22:00 to 06:00 across the scene, then stops exactly at the end frame.",
+      "Buffer restoration uses an ease-out so the refill feels like a completed obligation, not a race."
+    ],
+    "data": "const TREASURY = { operatingBalance: 3_200_000, bufferTarget: 2_400_000, swept: 800_000, apy: 0.051, fund: 'Prime MMF', overnightInterest: 111.78, payrollDue: '06:00', recalled: 800_000 };",
+    "notes": "Keep the APY visibly labelled as illustrative. Yields move and a stale number invites complaints."
+  }
+]

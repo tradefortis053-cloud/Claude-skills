@@ -1,0 +1,482 @@
+[
+  {
+    "id": "41",
+    "slug": "credit-score-gauge",
+    "name": "Credit Score Gauge",
+    "cat": "E",
+    "hook": "A needle sweeping to 742 with the four factors that moved it.",
+    "objective": "Explain a credit score: the 300 to 850 range, band placement, the weighted factors, and what improves the score over time.",
+    "dur": 17000,
+    "accent": "#10B981",
+    "accent2": "#4F46E5",
+    "scenes": [
+      ["Score Range", "0.0s - 4.0s", "The full 300 to 850 arc draws with band labels.", "Semicircular gauge, five bands (Poor to Exceptional), tick labels every 100 points.", "The arc draws from left to right over 900ms; band labels fade in sequentially; the needle sits at 300."],
+      ["Needle Sweeps", "4.0s - 9.5s", "The needle climbs to 742 in the Good band.", "Needle from 300 to 742, a live numeric readout, a glow trail behind the needle.", "The needle follows a damped spring with visible deceleration; the readout counts in lockstep; the trail decays over 300ms."],
+      ["Factor Weights", "9.5s - 13.5s", "Four weighted factors explain the score.", "Four horizontal bars with weights 35%, 30%, 15%, 10% plus a 10% mix row.", "Bars grow left to right at 100ms intervals; the weights sum visibly to 100% in a footer line."],
+      ["Improvement Plan", "13.5s - 17.0s", "Two specific actions project a 24-point increase.", "Action cards with an explicit point effect, a projected needle ghost at 766.", "A ghost needle renders at 40% opacity; action cards slide in at 120ms intervals; both needles hold at the end."]
+    ],
+    "vectors": [
+      ["Gauge arc", "Score range", "Semicircle 400px wide with a 14px stroke and rounded caps"],
+      ["Bands", "Score quality", "Five arc segments with rose, amber, yellow, emerald and deep emerald fills"],
+      ["Needle", "Current score", "Tapered polygon 120px long with a 10px circular hub"],
+      ["Factor bars", "Weights", "Four 300x10 rounded bars with labels and mono percentages"],
+      ["Projected needle", "Forecast", "Ghost needle at 40% opacity with a dashed outline"]
+    ],
+    "physics": [
+      "The needle angle must be a pure function of the score, mapped across the 300 to 850 domain.",
+      "Factor weights must sum to exactly 100% including the catch-all row.",
+      "The projected needle is visually subordinate to the live needle; 40% opacity and dashed.",
+      "Damped spring on the needle means roughly 3% overshoot, no more, or it reads as inaccurate instrumentation."
+    ],
+    "data": "const CREDIT = { score: 742, range: [300, 850], band: 'Good', factors: [{ name: 'Payment history', weight: 0.35 }, { name: 'Utilization', weight: 0.30 }, { name: 'History length', weight: 0.15 }, { name: 'Mix', weight: 0.10 }, { name: 'New credit', weight: 0.10 }], projected: 766, actions: ['Pay down 12% utilization', 'Dispute one late mark'] };",
+    "notes": "State the scoring model once, in mono, in a corner. Score models differ and unlabeled gauges invite arguments."
+  },
+  {
+    "id": "42",
+    "slug": "bnpl-installments",
+    "name": "BNPL Installments",
+    "cat": "E",
+    "hook": "One purchase split into four payments across six weeks, with zero interest.",
+    "objective": "Explain buy-now-pay-later mechanics: point-of-sale split, installment schedule, merchant discount fee, and late-fee policy.",
+    "dur": 16000,
+    "accent": "#4F46E5",
+    "accent2": "#10B981",
+    "scenes": [
+      ["Checkout Split", "0.0s - 4.0s", "A $240 cart offers four payments of $60 at checkout.", "Checkout panel, payment options list, a highlighted 4-payment row.", "The BNPL row highlights with a 1.03 scale and a 2px indigo outline; the schedule preview fades in beneath."],
+      ["Installment Schedule", "4.0s - 9.0s", "Four payment nodes land across a six-week timeline.", "Horizontal timeline with 4 nodes at day 0, 14, 28, 42, each with amount $60.00.", "Nodes pop in chronological order at 140ms; the connecting timeline draws ahead of each node at 90% of its travel."],
+      ["Merchant Fee", "9.0s - 13.0s", "The merchant pays a 4.9% discount fee and receives $228.24 today.", "Two-row settlement: customer pays 4x60, merchant receives 228.24 now, fee chip 11.76.", "The fee chip lifts out of the total with an 8px rise and a rose tint; the merchant net figure counts in last."],
+      ["Repaid", "13.5s - 16.0s", "Three payments clear and the fourth completes the schedule.", "Three settled nodes, a final PAID state, zero-interest badge throughout.", "Each node ticks to settled at 200ms intervals; the zero-interest badge stays constant to reinforce the claim."]
+    ],
+    "vectors": [
+      ["Timeline", "Installment cadence", "Horizontal rail 640px wide with 4 nodes and day labels"],
+      ["Payment nodes", "Installments", "36px circles with a mono amount beneath and a status ring"],
+      ["Cart panel", "Purchase", "340x200 with line items and a total in mono 32px"],
+      ["Fee chip", "Merchant cost", "Rose pill with a signed percentage and an absolute figure"],
+      ["Zero-interest badge", "Customer term", "Emerald outline pill with a 0% glyph"]
+    ],
+    "physics": [
+      "The four payments must sum exactly to the purchase total.",
+      "Merchant net plus fee must equal the purchase total, in the same currency.",
+      "Nodes settle only in chronological order; jumping ahead breaks the repayment narrative.",
+      "The zero-interest badge never animates or flashes. It is a constant, and constancy reads as reliability."
+    ],
+    "data": "const BNPL = { cart: 240.00, currency: 'USD', installments: 4, perPayment: 60.00, apr: 0, merchantFeePct: 0.049, merchantFee: 11.76, merchantNet: 228.24, scheduleDays: [0, 14, 28, 42], lateFee: 7.00 };",
+    "notes": "Show the merchant fee. BNPL demos that hide the merchant discount look like consumer advertising rather than explanation."
+  },
+  {
+    "id": "43",
+    "slug": "invoice-factoring",
+    "name": "Invoice Factoring",
+    "cat": "E",
+    "hook": "A 90-day invoice converting into 85% working capital today.",
+    "objective": "Explain factoring and invoice financing: receivables aging, advance rate, discount fee, and settlement when the customer pays.",
+    "dur": 17000,
+    "accent": "#4F46E5",
+    "accent2": "#10B981",
+    "scenes": [
+      ["Invoice Aging", "0.0s - 4.0s", "A $120,000 invoice sits at net-90 with an aging bar in amber.", "Invoice card with terms NET 90, an aging bar, a cash gap indicator.", "The aging bar fills over 1.2s across the 90-day span; the cash gap indicator pulses amber twice."],
+      ["Advance Rate", "4.0s - 9.0s", "The funder advances 85% immediately and holds 15% in reserve.", "Advance figure $102,000, reserve $18,000, a split bar with 85/15 segments.", "The split bar divides at 85% with a 240ms spring; both figures count in parallel on the same progress value."],
+      ["Discount Fee", "9.0s - 13.0s", "A 2.5% fee is disclosed against the reserve.", "Fee chip $3,000, effective annualized cost note, a net settlement preview.", "The fee chip slides out of the reserve segment; the annualized note fades in with a smaller type step."],
+      ["Settled on Day 90", "13.5s - 17.0s", "The customer pays, the reserve releases and the books close.", "Day-90 marker, reserve release arrow, net cash $117,000, a reconciled badge.", "The day-90 marker travels the aging bar; the reserve arrow reverses the earlier path; reconciled badge lands last."]
+    ],
+    "vectors": [
+      ["Invoice card", "Receivable", "360x180 with invoice number, customer, amount and terms"],
+      ["Aging bar", "Time to payment", "Horizontal bar with 30/60/90 ticks and an amber fill"],
+      ["Split bar", "Advance vs reserve", "Single bar with an 85/15 cut and a divider tick"],
+      ["Reserve release", "Deferred cash", "Curved arrow from reserve to operating balance"],
+      ["Reconciled badge", "Closure", "Emerald badge with a check glyph and a settlement date"]
+    ],
+    "physics": [
+      "Advance plus reserve must equal the invoice total exactly.",
+      "The fee is drawn from the reserve, not from the invoice, and the visual must show that path.",
+      "The annualized cost of 2.5% over 90 days is roughly 10% APR; show it so the comparison is honest.",
+      "The reserve release uses a mirrored path to the advance so the round trip is legible."
+    ],
+    "data": "const FACTORING = { invoice: 120_000, customer: 'Meridian Retail', termsDays: 90, advanceRate: 0.85, advance: 102_000, reserve: 18_000, feePct: 0.025, fee: 3_000, netSettled: 117_000, effectiveApr: 0.101 };",
+    "notes": "Annualize the fee on screen. A 2.5% fee over 90 days is roughly a 10% annual cost, and hiding that is the deceptive pattern."
+  },
+  {
+    "id": "44",
+    "slug": "payroll-distribution",
+    "name": "Payroll Distribution",
+    "cat": "E",
+    "hook": "One treasury branching to fifty employees in a single orchestrated wave.",
+    "objective": "Show bulk payroll disbursement: funding, batch validation, parallel payouts, and per-employee reconciliation status.",
+    "dur": 16000,
+    "accent": "#4F46E5",
+    "accent2": "#10B981",
+    "scenes": [
+      ["Treasury Funds", "0.0s - 3.5s", "The company treasury shows $284,600 ready for the August payroll run.", "Treasury card, payroll run ID, a funding status badge, 50-employee count.", "The funding badge flips from PENDING to FUNDED with a 200ms crossfade; the amount counts in."],
+      ["Batch Validation", "3.5s - 7.5s", "The batch passes three validation gates before sending.", "Three gates: balance check, duplicate check, tax withholding check.", "Gates light in sequence at 400ms intervals; each returns a green pass chip that stays visible."],
+      ["Parallel Payout", "7.5s - 12.5s", "Fifty payments fan out simultaneously across three rails.", "Central treasury node, 50 satellite employee nodes in a radial fan, rail color coding.", "Arcs draw in a radial sweep from top to bottom over 1.4s; satellites activate in 8ms waves rather than one by one."],
+      ["Reconciled", "12.5s - 16.0s", "49 succeed, 1 is pending bank verification, and the batch reconciles.", "49 emerald nodes, 1 amber node, a reconciliation summary and a retry action.", "The amber node pulses twice; the summary counts 49/50; the retry chip fades in and holds."]
+    ],
+    "vectors": [
+      ["Treasury node", "Funding source", "96px rounded square with a building glyph and a mono balance below"],
+      ["Employee satellites", "Recipients", "50 circles radius 8 on two concentric rings at r=180 and r=260"],
+      ["Payout arcs", "Disbursement", "50 curves from center to satellites in three rail hues"],
+      ["Validation gates", "Pre-flight checks", "Three rounded rects with a check slot and a lock glyph"],
+      ["Reconciliation summary", "Outcome", "Card with three counters: paid, pending, failed"]
+    ],
+    "physics": [
+      "Fifty simultaneous arc draws must be batched by angle band, roughly 8 arcs per 120ms, or the browser will drop frames.",
+      "Satellite activation uses an 8ms cascade, which reads as simultaneous without the cost of 50 independent transitions.",
+      "Never render 50 individual DOM nodes with separate SVG filters; use one group filter and per-node opacity.",
+      "The pending node must remain visible in the final frame; a perfect 50/50 result is less credible than 49/50."
+    ],
+    "data": "const PAYROLL = { runId: 'PR-2026-08', employees: 50, gross: 284_600, rails: ['ACH', 'RTP', 'Local'], paid: 49, pending: 1, failed: 0, totalPaid: 278_420, retryEta: 'Next window 02:00' };",
+    "notes": "Performance is the risk here. Cap animated elements near 80 and reuse a single path template rather than creating 50 unique curves."
+  },
+  {
+    "id": "45",
+    "slug": "expense-receipt-ocr",
+    "name": "Expense Receipt OCR",
+    "cat": "E",
+    "hook": "A crumpled receipt turning into structured expense fields.",
+    "objective": "Show receipt OCR for expenses: image capture, field detection, extraction into structured data, category prediction and policy check.",
+    "dur": 17000,
+    "accent": "#06B6D4",
+    "accent2": "#10B981",
+    "scenes": [
+      ["Capture", "0.0s - 4.0s", "The camera frames a receipt and auto-crops with perspective correction.", "Phone viewfinder, receipt at an angle, four crop handles snapping to corners.", "The crop quad deforms from screen-aligned to perspective-correct over 700ms; a subtle grid overlay appears."],
+      ["Field Detection", "4.0s - 9.0s", "Bounding boxes appear over vendor, date, total and tax.", "Four dashed boxes with label tags, scanning line sweeping vertically.", "The scan line sweeps top to bottom twice; each box draws after the line passes it, with a 120ms delay."],
+      ["Extraction", "9.0s - 13.5s", "Text lifts from the receipt into structured form fields.", "Extraction ghosts flying from box to field, four form rows populating in mono.", "Ghosts travel along a slight arc over 400ms; fields populate sequentially with a caret blink; confidence chips appear at 92% and above."],
+      ["Policy Check", "13.5s - 17.0s", "The expense is categorized, policy-checked and submitted.", "Category chip MEALS, policy status WITHIN LIMIT, submit confirmation with an amount match.", "Category chip types in; the policy check flips to emerald; a final match line confirms the total equals the sum of line items."]
+    ],
+    "vectors": [
+      ["Viewfinder", "Capture frame", "Rounded rect with 4 corner brackets and a 20% dim mask outside"],
+      ["Crop quad", "Perspective correction", "Quadrilateral with draggable corner handles and hairline guides"],
+      ["Field boxes", "Detection regions", "Dashed rounded rects with label tabs anchored top-left"],
+      ["Scan line", "OCR sweep", "2px horizontal line with a gradient glow, clipped to the receipt"],
+      ["Form rows", "Structured output", "Four rows with label, mono value and a confidence chip"]
+    ],
+    "physics": [
+      "Detection boxes appear only after the scan line has passed them; simultaneous appearance implies magic.",
+      "Extracted values use a light typing effect at 30 characters per second, not a hard cut.",
+      "Confidence is shown per field, and values below 90% visually flag for review.",
+      "The final total must equal the sum of detected line items; recompute at load."
+    ],
+    "data": "const OCR = { vendor: 'Harbor Provisions', date: '2026-08-14', total: 84.36, tax: 6.12, category: 'Meals', confidence: { vendor: 0.97, date: 0.94, total: 0.99, tax: 0.91 }, policy: 'within $100 limit', currency: 'USD' };",
+    "notes": "Keep the receipt content clearly synthetic. A real-looking receipt photo with a real vendor name can create legal friction in a demo."
+  },
+  {
+    "id": "46",
+    "slug": "revenue-based-financing",
+    "name": "Revenue-Based Financing",
+    "cat": "E",
+    "hook": "A repayment bar that breathes with revenue instead of marching on a calendar.",
+    "objective": "Explain RBF: an upfront advance, a fixed repayment multiple, a percentage of monthly revenue, and the true cost of capital.",
+    "dur": 17000,
+    "accent": "#4F46E5",
+    "accent2": "#10B981",
+    "scenes": [
+      ["Capital Advance", "0.0s - 3.5s", "A $500,000 advance lands with a repayment cap of $650,000.", "Advance card, a repayment multiple of 1.3x, a cap amount, terms summary.", "The advance amount counts in over 500ms; the 1.3x multiple chip scales in at 200ms and stays fixed."],
+      ["Revenue Share", "3.5s - 9.0s", "Each month remits 8% of revenue and the bar tracks proportionally.", "Monthly revenue bars rising and falling, a remittance overlay on each bar, a cumulative repaid counter.", "Bars animate month by month at 320ms each; the remittance overlay grows with a 100ms lag; the cumulative counter follows."],
+      ["Slow Month", "9.0s - 13.5s", "A weak month means a smaller payment and a longer tail.", "A short revenue bar, a visibly small remittance, the projected payoff date moving later.", "The projected date slides right with a 300ms ease; the short bar renders at 40% height with a muted tint."],
+      ["Fully Repaid", "13.5s - 17.0s", "The cap is reached and the obligation ends, with the effective APR shown.", "Cap reached badge, effective annualized cost 18.4%, total months 26.", "The cumulative counter lands exactly on the cap; the effective-APR figure fades in last; hold."]
+    ],
+    "vectors": [
+      ["Revenue bars", "Monthly performance", "Width 28, height mapped to revenue, 4px gap, at 30% opacity base fill"],
+      ["Remittance overlay", "Investor share", "Same-width bar segment drawn from the base at 80% opacity in indigo"],
+      ["Cumulative counter", "Progress to cap", "Mono 36px with a progress bar beneath"],
+      ["Payoff projection", "Timeline", "Date chip that translates along a horizontal rule"],
+      ["Cap badge", "Completion", "Emerald badge with a check and a total figure"]
+    ],
+    "physics": [
+      "Remittance is always exactly the stated percentage of the rendered revenue bar; recompute per frame.",
+      "The cumulative counter must stop exactly at the cap, never overshoot.",
+      "The payoff date only moves later, never earlier, when revenue dips.",
+      "Show effective annualized cost at the end; RBF is cheaper than equity only sometimes, and the number should speak."
+    ],
+    "data": "const RBF = { advance: 500_000, multiple: 1.3, cap: 650_000, revenueSharePct: 0.08, months: 26, strongMonth: 210_000, weakMonth: 96_000, effectiveApr: 0.184 };",
+    "notes": "The effective APR is the honest counterweight to the friendly 'we only take a share' framing. Keep it in the final frame, not buried."
+  },
+  {
+    "id": "47",
+    "slug": "cap-table-dilution",
+    "name": "Cap Table Dilution",
+    "cat": "E",
+    "hook": "Founder equity shrinking while the pie grows faster than it shrinks.",
+    "objective": "Show dilution mechanics across rounds: pre and post-money, option pool expansion, founder dilution, and the absolute value effect.",
+    "dur": 18000,
+    "accent": "#4F46E5",
+    "accent2": "#10B981",
+    "scenes": [
+      ["Founding Cap Table", "0.0s - 3.5s", "Two founders hold 100% split 60/40.", "Pie with two segments, founder labels, a note that the pie equals 100%.", "The pie draws clockwise over 700ms; segment labels fade in as each closes."],
+      ["Seed Round", "3.5s - 8.0s", "A $2M seed at $8M pre-money mints new shares and dilutes founders.", "Pie with a new investor slice at 20%, a pre/post money band, a dilution note of -12.0% and -8.0%.", "The pie re-slices with a 900ms interpolation; founder labels update only after the slice settles."],
+      ["Option Pool", "8.0s - 12.5s", "A 10% option pool is carved from the founders, not the investor.", "An ESOP slice appearing between founders, a pool source annotation.", "The ESOP slice grows from the founders' arcs specifically; a dashed leader line points to the source."],
+      ["Series A", "12.5s - 18.0s", "A $6M Series A at $24M pre-money lands, and absolute value still rises.", "Pie with four segments, an absolute value callout showing founder stake worth more despite lower ownership.", "The pie re-slices again; the value callout counts from $4.8M to $10.1M; the caption contrasts percent versus dollars and holds."]
+    ],
+    "vectors": [
+      ["Cap table pie", "Ownership", "Circle r=150 with segments separated by 2px white gaps"],
+      ["Investor slice", "New ownership", "Arc with a distinct hue and a subtle outer ring on first appearance"],
+      ["ESOP slice", "Option pool", "Hatched fill at 20% opacity to differentiate from cash ownership"],
+      ["Dilution annotation", "Change", "Signed percentage chips anchored at segment midpoints"],
+      ["Absolute value callout", "Dollar outcome", "Card with two rows: ownership percent and dollar value"]
+    ],
+    "physics": [
+      "All segments must sum to 100.0% after every round; compute and assert at load, not just visually.",
+      "Only the founders' arcs shrink when the pool is created, never the investor's.",
+      "Labels fade in only after their arc stops moving, otherwise the text smears.",
+      "The final scene must present percent and dollars together; dilution without value context is misleading."
+    ],
+    "data": "const CAP_TABLE = { rounds: [{ name: 'Founding', founders: [0.60, 0.40], investor: 0, esop: 0 }, { name: 'Seed', founders: [0.48, 0.32], investor: 0.20, esop: 0 }, { name: 'Seed + Pool', founders: [0.43, 0.27], investor: 0.20, esop: 0.10 }, { name: 'Series A', founders: [0.3225, 0.2025], investor: 0.275, esop: 0.20 }], founderValueStart: 4_800_000, founderValueEnd: 10_100_000 };",
+    "notes": "Verify every round's segments sum to 100%. Cap table demos are checked by finance people with a calculator in hand."
+  },
+  {
+    "id": "48",
+    "slug": "saas-mrr-waterfall",
+    "name": "SaaS MRR Waterfall",
+    "cat": "E",
+    "hook": "New, expansion and churn stacking into one honest net ARR number.",
+    "objective": "Explain MRR movement: new business, expansion, contraction, churn, and net new MRR building to ending ARR.",
+    "dur": 17000,
+    "accent": "#10B981",
+    "accent2": "#F43F5E",
+    "scenes": [
+      ["Starting MRR", "0.0s - 3.5s", "The opening balance of $412,000 stands as a solid column.", "Single bar with a mono label and a baseline grid.", "The bar grows from zero in 500ms; the label counts in with tabular-nums and locks."],
+      ["Additions", "3.5s - 8.5s", "New business and expansion stack upward in green.", "Two stacked positive segments with labels NEW and EXPANSION, floating connector rules.", "Each segment grows 0 -> full over 400ms at 200ms offsets; connector rules draw horizontally after each settles."],
+      ["Subtractions", "8.5s - 13.5s", "Contraction and churn pull down in rose.", "Two negative segments with labels CONTRACTION and CHURN, descending connectors.", "Segments drop on a 320ms ease-in; a 1px baseline marker indicates where the bar started so the net is readable."],
+      ["Net ARR", "13.5s - 17.0s", "The closing bar resolves to $446,800 with net new of $34,800.", "Final bar, net new label, a growth rate of 8.4% MoM, an ARR annualization note.", "The closing bar eases to its final height over 500ms; the net label fades in centered on the delta; hold."]
+    ],
+    "vectors": [
+      ["Waterfall columns", "MRR movement", "Vertical bars 56px wide with 3px gaps and rounded 2px caps"],
+      ["Connector rules", "Continuity", "Horizontal 1px dashed lines linking bar tops"],
+      ["Value labels", "Amounts", "Mono 13px centered above each column"],
+      ["Baseline", "Zero reference", "1px line across the chart at 20% opacity"],
+      ["Delta brace", "Net new MRR", "Vertical brace spanning the net change with a mono label"]
+    ],
+    "physics": [
+      "Waterfall column heights must reconcile exactly: opening plus additions minus subtractions equals closing.",
+      "Negative segments start from the previous cumulative top, not from the baseline.",
+      "Connector rules draw only after the adjacent columns finish, so the eye follows the arithmetic.",
+      "Churn is never hidden in a net number; it gets its own visible segment."
+    ],
+    "data": "const WATERFALL = { startMrr: 412_000, new: 38_400, expansion: 21_600, contraction: 9_200, churn: 16_000, netNew: 34_800, endMrr: 446_800, growthMoM: 0.084, endArr: 5_361_600 };",
+    "notes": "The reconciliation is the entire point. Compute closing from the components at load and render that, so the chart cannot lie."
+  },
+  {
+    "id": "49",
+    "slug": "usage-based-billing",
+    "name": "Usage-Based Billing",
+    "cat": "E",
+    "hook": "An API meter ticking up and sliding between pricing tiers in real time.",
+    "objective": "Explain metered billing: usage counters, tiered pricing blocks, graduated rate application, and the projected invoice.",
+    "dur": 16000,
+    "accent": "#4F46E5",
+    "accent2": "#06B6D4",
+    "scenes": [
+      ["Usage Meter", "0.0s - 3.5s", "The meter starts at 0 and ticks up as API calls arrive.", "Circular usage meter, live call counter, a mono rate of calls per second.", "The counter increments in bursts of 3 to 5 with a 60ms cadence; the meter arc fills proportionally."],
+      ["Tier Ladder", "3.5s - 8.5s", "The usage crosses 100k and enters the second pricing block.", "Four tier bands with unit prices, a marker crossing tier boundaries.", "The marker slides along the ladder; on each boundary crossing the band under it brightens for 200ms and the effective rate updates."],
+      ["Graduated Pricing", "8.5s - 13.0s", "The invoice breaks into per-tier line items rather than one blended rate.", "Four line items with usage per tier, unit price and subtotal, a blended effective rate.", "Each line item grows in as its threshold is passed; the blended rate recomputes and re-renders each frame."],
+      ["Projected Invoice", "13.0s - 16.0s", "The month projects to $2,650.00 with the overage clearly separated.", "Invoice summary, base commit $2,000, overage $650, projected total, a note on volume discount eligibility.", "The summary sheet slides up 24px on a spring; totals count in; the discount hint fades in last."]
+    ],
+    "vectors": [
+      ["Usage meter", "Consumption", "Circle r=110 with a 10px stroke, dasharray mapped to the tier cap"],
+      ["Tier ladder", "Pricing blocks", "Four horizontal bands with boundary ticks and mono unit prices"],
+      ["Line items", "Invoice composition", "Four rows with usage, unit price, and right-aligned subtotal"],
+      ["Projection sheet", "Invoice", "Card with a base commit row, overage row and total rule"],
+      ["Rate ticker", "Live throughput", "Mono counter with a small sparkline of the last 60 samples"]
+    ],
+    "physics": [
+      "Graduated pricing means each tier's rate applies only within that tier; never multiply total usage by the top rate.",
+      "The invoice total must equal the sum of rendered line items, computed not hard-coded.",
+      "Tier boundary crossers pulse once and settle; repeated flashing makes the ladder feel unstable.",
+      "Use 4-decimal unit prices to keep small tiers visually meaningful."
+    ],
+    "data": "const USAGE = { calls: 1_200_000, tiers: [{ upTo: 100_000, rate: 0.005 }, { upTo: 500_000, rate: 0.003 }, { upTo: 1_000_000, rate: 0.0015 }, { upTo: null, rate: 0.001 }], baseCommit: 2_000, overage: 650, projected: 2_650, effectiveRate: 0.0022 };",
+    "notes": "Graduated and volume pricing are different models. Label which one is being shown, or the invoice math will be challenged."
+  },
+  {
+    "id": "50",
+    "slug": "customs-trade-finance",
+    "name": "Customs and Trade Finance",
+    "cat": "E",
+    "hook": "A cargo ship unlocking a letter of credit at each supply-chain checkpoint.",
+    "objective": "Show trade finance documentation: letter of credit issuance, checkpoint-based document release, and payment on bill of lading.",
+    "dur": 19000,
+    "accent": "#06B6D4",
+    "accent2": "#4F46E5",
+    "scenes": [
+      ["Letter of Credit", "0.0s - 4.5s", "An importer's bank issues an LC for $480,000 to a supplier abroad.", "LC document card with terms, issuing bank and beneficiary, a seal glyph.", "The document slides in and the seal stamps with a 1.1 scale overshoot; the amount counts in."],
+      ["Voyage", "4.5s - 10.5s", "A ship travels a route across four checkpoints.", "Route polyline across a simplified map, ship vector, four checkpoint nodes with labels.", "The ship moves along the path via getPointAtLength; the route draws ahead by 8% so it never looks like the ship is ahead of the path."],
+      ["Document Release", "10.5s - 15.5s", "Each checkpoint unlocks one required document.", "Four document chips unlocking sequentially: invoice, packing list, bill of lading, certificate of origin.", "Each chip flips from locked to released with a 180ms crossfade; the lock glyph rotates open 90deg."],
+      ["Payment Released", "15.5s - 19.0s", "All documents verified means funds release to the supplier.", "Full document set, verification badge, payment rail to the supplier, a final LC status CLOSED.", "The verification badge draws; the payment rail travels the reverse of the voyage path; status flips to CLOSED and holds."]
+    ],
+    "vectors": [
+      ["Map plate", "Trade geography", "Simplified landmass paths at 12% fill with a dotted route overlay"],
+      ["Ship", "Cargo movement", "Top-down vessel outline 44x20 with a wake path trailing behind"],
+      ["Checkpoint nodes", "Customs stages", "24px circles with a flag glyph and a mono stage label"],
+      ["Document chips", "Required paperwork", "120x40 cards with a lock glyph and a document-type label"],
+      ["Payment rail", "Settlement", "Gradient path from the issuing bank to the supplier"]
+    ],
+    "physics": [
+      "The ship leads the path draw by exactly 8%, which reads as motion along a route rather than a race.",
+      "Documents unlock only at their specific checkpoint; batching them together destroys the causal story.",
+      "The wake trails 60px behind the ship and fades over 500ms.",
+      "Payment travels the reverse route to close the loop geometrically."
+    ],
+    "data": "const TRADE = { lcAmount: 480_000, currency: 'USD', importer: 'Northline Trading', supplier: 'Andes Components', checkpoints: ['Port of Loading', 'Transit', 'Customs', 'Destination Port'], documents: ['Commercial Invoice', 'Packing List', 'Bill of Lading', 'Certificate of Origin'], incoterm: 'CIF', voyageDays: 34 };",
+    "notes": "Keep the geography schematic. Accurate coastlines invite scrutiny of projection errors that are irrelevant to the explanation."
+  },
+  {
+    "id": "51",
+    "slug": "debt-snowball-vs-avalanche",
+    "name": "Debt Snowball vs Avalanche",
+    "cat": "E",
+    "hook": "Two payoff strategies racing to zero with different curves and the same finish line.",
+    "objective": "Compare debt snowball and avalanche: ordering by balance versus rate, total interest paid, and payoff time under both.",
+    "dur": 19000,
+    "accent": "#4F46E5",
+    "accent2": "#10B981",
+    "scenes": [
+      ["Debt Loaded", "0.0s - 3.5s", "Four debts load with balances and APRs.", "Four debt cards with balance and APR, a total balance of $28,400.", "Cards stack in at 80ms intervals; the total counts up and locks with a mono summary line."],
+      ["Snowball Starts", "3.5s - 8.5s", "The snowball pays the smallest balance first regardless of rate.", "Left payoff track, debt cards ordered by balance ascending, cross-out stamps.", "Cards cross out sequentially at 500ms intervals; each cross-out shrinks the balance to zero."],
+      ["Avalanche Starts", "8.5s - 13.5s", "The avalanche targets the highest APR first.", "Right payoff track, debt cards ordered by APR descending, an interest-saved counter.", "Parallel progress with the snowball, but the interest counter runs lower; both tracks share the same time axis."],
+      ["Finish Line", "13.5s - 19.0s", "Both reach zero; the avalanche saves $1,340 and 3 months.", "Two race lanes converging to zero, a comparison card with months and interest.", "Lane markers land at different months on the same axis; the comparison card reveals both figures side by side and holds."]
+    ],
+    "vectors": [
+      ["Debt cards", "Obligations", "Four 220x80 cards with balance, APR and a status stamp area"],
+      ["Payoff tracks", "Strategy lanes", "Two horizontal lanes with month ticks and a zero line"],
+      ["Cross-out stamp", "Debt cleared", "Rotated -8deg uppercase outline stamp with a 1.5px stroke"],
+      ["Race markers", "Progress", "Circular markers that traverse their lane based on remaining balance"],
+      ["Comparison card", "Outcome", "Three-row table: months, total interest, interest saved"]
+    ],
+    "physics": [
+      "Both lanes share one time axis; different time scales would invalidate the comparison entirely.",
+      "Snowball visually clears cards faster at the start, which is the honest psychological benefit.",
+      "The avalanche's interest saving is the counterweight and must appear in the same frame as the finish.",
+      "Number of months and interest must come from the simulated amortization, not estimates."
+    ],
+    "data": "const DEBT = { totalBalance: 28_400, debts: [{ name: 'Store Card', balance: 1_200, apr: 0.2699 }, { name: 'Credit Card', balance: 6_400, apr: 0.2249 }, { name: 'Auto Loan', balance: 8_800, apr: 0.0695 }, { name: 'Student Loan', balance: 12_000, apr: 0.051 }, snowballMonths: 34, avalancheMonths: 31, snowballInterest: 4_890, avalancheInterest: 3_550 };",
+    "notes": "Simulate the amortization properly, at least monthly, including minimum payments. Both lanes must reconcile to the same total paid."
+  },
+  {
+    "id": "52",
+    "slug": "chargeback-dispute-flow",
+    "name": "Chargeback Dispute Flow",
+    "cat": "E",
+    "hook": "Evidence in, arbitration out, funds restored, on one timeline.",
+    "objective": "Show the dispute lifecycle: chargeback filing, merchant evidence submission, network arbitration, and outcome notification.",
+    "dur": 18000,
+    "accent": "#F43F5E",
+    "accent2": "#10B981",
+    "scenes": [
+      ["Chargeback Filed", "0.0s - 4.0s", "A cardholder files a dispute for $1,240 with reason code 'not as described'.", "Dispute card with reason code, amount, and a filed timestamp, a case ID.", "The reason code types in mono; the case ID stamps with a 200ms spring; the filed chip turns amber."],
+      ["Merchant Evidence", "4.0s - 9.5s", "The merchant uploads tracking, delivery proof and correspondence.", "Three evidence upload tiles with file glyphs, progress rings, and a submission deadline chip.", "Upload rings fill at 120ms intervals; the deadline chip counts down from 7 days in mono."],
+      ["Arbitration Review", "9.5s - 14.5s", "The network reviews both sides and issues a decision.", "Balanced scale graphic with evidence weights on each side, a review status ladder of three stages.", "Scale tilts toward the cardholder with a 400ms settle; the ladder steps light at 400ms intervals."],
+      ["Funds Restored", "14.5s - 18.0s", "The decision lands, funds return to the cardholder and the case closes.", "Outcome card, restored funds arrow to the cardholder, closed status with a reason summary.", "The funds arrow reverses the original charge path; the closed stamp lands with a 1.08 overshoot; hold."]
+    ],
+    "vectors": [
+      ["Dispute card", "Case", "360x200 with reason code, amount, and a status rail"],
+      ["Evidence tiles", "Merchant proof", "Three 140x100 tiles with a paper glyph and a progress ring"],
+      ["Deadline chip", "Time pressure", "Amber pill with a mono countdown and a clock glyph"],
+      ["Scale", "Arbitration", "Central fulcrum with two weighted pans and a settling beam"],
+      ["Outcome card", "Decision", "Card with a decision label, amount restored and a closing rule"]
+    ],
+    "physics": [
+      "The deadline countdown is visible during evidence submission; deadlines are the mechanics of chargebacks.",
+      "The scale tilts only once, slowly, and settles without oscillation.",
+      "Funds restoration reuses the original charge path in reverse, consistent with skill 08.",
+      "Neutral language throughout: 'decision', not 'win' or 'loss'."
+    ],
+    "data": "const CHARGEBACK = { caseId: 'CB-2214', amount: 1_240, reasonCode: 'not_as_described', filedDaysAgo: 0, evidenceDeadlineDays: 7, evidence: ['Tracking', 'Delivery photo', 'Email thread'], decision: 'cardholder', restoreDays: 3, status: 'CLOSED' };",
+    "notes": "Pair this with skill 08 for a reversible-flows series. Both use mirrored path geometry and should share the same visual language."
+  },
+  {
+    "id": "53",
+    "slug": "embedded-insurance",
+    "name": "Embedded Insurance",
+    "cat": "E",
+    "hook": "A checkout toggle that mints a policy in under a second.",
+    "objective": "Show embedded insurance at checkout: coverage offer, premium calculation, instant policy issuance and claims path.",
+    "dur": 15000,
+    "accent": "#10B981",
+    "accent2": "#4F46E5",
+    "scenes": [
+      ["Checkout", "0.0s - 3.5s", "A $1,899 laptop sits in the cart with an assurance row beneath.", "Checkout card, line items, an assurance row with a shield glyph and a 2.4% premium.", "The assurance row highlights with a 2px indigo outline; the premium chip counts from 0.0% to 2.4%."],
+      ["Toggle On", "3.5s - 7.0s", "The micro-shield toggle flips and coverage terms expand.", "Toggle at 56x32, an expanding details panel with 3 coverage bullets and an exclusion note.", "The panel expands from 0 to its height over 320ms; bullets fade in at 80ms intervals; the exclusion line uses a smaller, muted style."],
+      ["Policy Issued", "7.0s - 11.5s", "A policy number is minted with an effective timestamp and a premium of $45.58.", "Policy card with number, term, premium, and an instant-issue badge.", "The policy number types at 24ms per character; the instant badge stamps in with a 180ms spring; the total updates once."],
+      ["Claim Path", "11.5s - 15.0s", "A claim button appears with a one-tap promise and a 48-hour target.", "Claim CTA with a subtle pulse, a 48h SLA chip, and a coverage summary line.", "The CTA pulses twice at 1.04 scale; the SLA chip fades in; everything settles to a still final frame."]
+    ],
+    "vectors": [
+      ["Shield glyph", "Protection", "Shield path 40px tall with a check glyph and a 1.5px stroke"],
+      ["Toggle", "Opt-in", "Rounded track with a 24px knob and a subtle inner shadow"],
+      ["Policy card", "Contract", "340x200 with policy number, term dates, premium and issuer line"],
+      ["SLA chip", "Service promise", "Emerald pill with a clock glyph and a mono duration"],
+      ["Coverage summary", "Terms digest", "Three-bullet block with consistent line heights"]
+    ],
+    "physics": [
+      "Premium must be computed from the cart total and the displayed rate; the arithmetic is checked by viewers.",
+      "The exclusions line is not optional; an insurance demo without exclusions is a compliance problem.",
+      "Instant issuance is under one second on screen; avoid a fake spinner that contradicts the promise.",
+      "The claim CTA is the only element that pulses at the end; reduce competing motion to keep focus."
+    ],
+    "data": "const INSURANCE = { cart: 1_899, item: 'Laptop', premiumPct: 0.024, premium: 45.58, coverageLimit: 1_899, termMonths: 24, policyNo: 'POL-8F31-2210', issuedIn: '0.8s', slaHours: 48 };",
+    "notes": "Show the annualized cost too. A 2.4% premium on a $1,899 laptop is $45.58 for the term; ambiguous term lengths are the usual complaint."
+  },
+  {
+    "id": "54",
+    "slug": "carbon-offset-checkout",
+    "name": "Carbon Offset Checkout",
+    "cat": "E",
+    "hook": "A checkout that measures grams of CO2 and grows a tree on the receipt.",
+    "objective": "Show carbon-aware checkout: footprint estimation, offset pricing, contribution capture and verification record.",
+    "dur": 16000,
+    "accent": "#10B981",
+    "accent2": "#06B6D4",
+    "scenes": [
+      ["Order Summary", "0.0s - 3.5s", "A $96 order is itemized and a footprint line appears.", "Order card with three items, a footprint row in mono grams of CO2.", "The footprint figure counts from 0 to 14.2 kg; the row gains a leaf glyph that fades in at completion."],
+      ["Footprint Estimate", "3.5s - 8.0s", "Shipping, packaging and product emissions break down.", "A three-segment horizontal bar labeled SHIPPING, PACKAGING, PRODUCT with a total.", "Segments grow left to right at 120ms offsets; a total rule draws beneath and the grams count in."],
+      ["Offset Toggle", "8.0s - 12.5s", "A $0.71 offset covers 14.2 kg at $50 per tonne.", "Offset toggle with a price chip, a per-tonne rate note, and a contribution summary.", "The toggle flips with a 6% knob overshoot; the price chip counts in; the rate note fades in second."],
+      ["Receipt and Tree", "12.5s - 16.0s", "The receipt records the contribution and a tree vector draws.", "Receipt card with an offset line, a tree glyph drawing via strokes, a registry reference.", "The tree trunk draws first, then branches at 60ms stagger, then leaves fill at 12% opacity; the registry ID types last."]
+    ],
+    "vectors": [
+      ["Footprint bar", "Emissions breakdown", "Three stacked segments with a shared baseline and mono kg labels"],
+      ["Leaf glyph", "Carbon marker", "Simple leaf path with a single midrib stroke"],
+      ["Offset toggle", "Opt-in", "Compact track with a price chip anchored to the right"],
+      ["Tree", "Offset symbol", "Trunk plus 7 branches drawn with stroke-dasharray, 3 leaf clusters filled"],
+      ["Registry reference", "Verification", "Mono string with a verified badge and a project name"]
+    ],
+    "physics": [
+      "Fee arithmetic must hold: 14.2 kg at $50 per tonne equals $0.71, rounded consistently.",
+      "The tree draws from trunk outward; leaves appear only after their branch completes.",
+      "Offset pricing is transparent per tonne; opaque 'green fees' are the failure mode this skill avoids.",
+      "Colours stay in the emerald-cyan family; avoid using green for both offsets and success states in the same scene."
+    ],
+    "data": "const CARBON = { order: 96.00, items: 3, footprintKg: 14.2, breakdown: { shipping: 6.4, packaging: 2.1, product: 5.7 }, ratePerTonne: 50, offsetCost: 0.71, project: 'Verified Reforestation - Western Ghats', registryId: 'VCS-2291-4471' };",
+    "notes": "Rounding is the trap here: 0.0142 tonnes x $50 is $0.71, and reviewers will check. Compute the fee from the same rounded footprint shown on screen."
+  },
+  {
+    "id": "55",
+    "slug": "ai-financial-copilot",
+    "name": "AI Financial Copilot",
+    "cat": "E",
+    "hook": "A sentence typed in plain language turning into a live cash-flow forecast.",
+    "objective": "Show an AI copilot workflow: natural-language intent, tool calls against real financial data, a generated forecast chart, and cited assumptions.",
+    "dur": 19000,
+    "accent": "#4F46E5",
+    "accent2": "#06B6D4",
+    "scenes": [
+      ["Prompt", "0.0s - 3.5s", "The user types: 'What does cash runway look like if hiring slows by 30%?'", "Prompt bar with a caret, a submit chip, and a small model badge.", "Characters type at 26ms; the caret blinks at 530ms intervals; the submit chip lights when the last character lands."],
+      ["Tool Calls", "3.5s - 9.0s", "Three tool calls fire against ledger, payroll and forecast data.", "Three call chips with names, a response time in mono, and a progress state.", "Chips fan out from the prompt at 120ms intervals; each resolves with a 180ms crossfade and a mono latency figure."],
+      ["Forecast Chart", "9.0s - 14.5s", "The chart draws two paths: current plan and slowed hiring.", "Dual-line forecast chart with a shaded runway area, month axis, and an intersection marker at the runway end.", "Both paths draw over 1.2s at 120ms offset; the shaded area fades in; the runway marker drops onto the intersection point."],
+      ["Cited Answer", "14.5s - 19.0s", "The answer states 22 months and cites every assumption behind it.", "Answer card with a headline figure, three assumption rows with source tags, and a confidence note.", "The headline counts to 22 months; assumption rows reveal at 140ms intervals; source tags land last with a small link glyph."]
+    ],
+    "vectors": [
+      ["Prompt bar", "Input surface", "Rounded rect with a caret, an inline submit button and a model badge"],
+      ["Tool chips", "System calls", "Three 160x56 chips with a name, status dot and mono latency"],
+      ["Forecast paths", "Outcomes", "Two polylines generated from monthly data with gradient area fills"],
+      ["Runway marker", "Intersection", "Vertical dashed line with a down-arrow head and a mono month label"],
+      ["Assumption rows", "Citations", "Three rows with label, value and a source tag pill"]
+    ],
+    "physics": [
+      "The forecast curve must be generated from the stated assumptions at load, not drawn by hand to look plausible.",
+      "Tool calls complete before the chart begins, so causality is preserved.",
+      "The answer's headline number must match the chart's runway marker exactly.",
+      "Assumptions and sources are part of the answer, not an afterthought. They render in the same final frame."
+    ],
+    "data": "const COPILOT = { prompt: 'What does cash runway look like if hiring slows by 30%?', tools: [{ name: 'ledger.query', ms: 84 }, { name: 'payroll.model', ms: 132 }, { name: 'forecast.run', ms: 240 }], cashOnHand: 4_200_000, burn: 191_000, runwayMonths: 22, slowedRunwayMonths: 29, assumptions: [{ label: 'Current burn', value: '$191k/mo', source: 'Ledger' }, { label: 'Hiring plan', value: '-30%', source: 'Payroll' }, { label: 'Revenue growth', value: '4% MoM', source: 'Forecast' }] };",
+    "notes": "This is the skill that most needs visible sourcing. An AI finance answer without cited assumptions is a liability, not a demo."
+  }
+]

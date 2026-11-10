@@ -827,6 +827,8 @@ class TimelineEngine {
   _loop() {
     if (!this.playing) return;
     this.raf = requestAnimationFrame(now => {
+      // a frame can already be queued when pause() is called; bail before advancing
+      if (!this.playing) { this.raf = null; return; }
       const dt = Math.min(64, now - (this.last ?? now));
       this.last = now;
       this.progress += (dt * this.speed) / this.duration;
@@ -1110,6 +1112,9 @@ const engine = new TimelineEngine({
   render
 });
 
+// Expose the engine so the deterministic frames can be captured (see docs/ENGINE.md §11)
+window.engine = engine;
+
 const ICON = {
   play:  '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.2v13.6c0 .8.9 1.3 1.6.9l10.6-6.8c.6-.4.6-1.4 0-1.8L9.6 4.3C8.9 3.9 8 4.4 8 5.2Z"/></svg>',
   pause: '<svg viewBox="0 0 24 24" fill="currentColor"><rect x="7" y="4.6" width="3.6" height="14.8" rx="1.2"/><rect x="13.4" y="4.6" width="3.6" height="14.8" rx="1.2"/></svg>',
@@ -1137,7 +1142,7 @@ engine.onFrame = ({ progress, sceneIndex, playing }) => {
   scrub.setAttribute('aria-valuenow', Math.round(progress * 100));
 
   const secs = Math.floor((progress * 16000) / 1000);
-  if (hintRight) hintRight.textContent = (16 * engine.speed).toFixed(1) + 's @ ' + engine.speed + 'x';
+  if (hintRight) hintRight.textContent = (16 / engine.speed).toFixed(1) + 's @ ' + engine.speed + 'x';
   timeNow.textContent = String(Math.floor(secs / 60)).padStart(2, '0') + ':' + String(secs % 60).padStart(2, '0');
 
   paintTransport(progress >= 0.9999 ? 'ended' : playing ? 'playing' : 'paused');
@@ -1200,6 +1205,7 @@ document.querySelectorAll('.speed').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.speed').forEach(b => b.classList.toggle('is-on', b === btn));
     engine.setSpeed(parseFloat(btn.dataset.speed));
+    render(engine.progress);
   });
 });
 
